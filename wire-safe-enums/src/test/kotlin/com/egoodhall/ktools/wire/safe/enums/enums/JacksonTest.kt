@@ -16,7 +16,7 @@ import org.assertj.core.api.ObjectAssert
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class WireSafeEnumTest {
+class JacksonTest {
   companion object {
     val OBJECT_MAPPER = ObjectMapper().registerKotlinModule()
     val KNOWN_VALUE = TestEnum.A.wireSafe()

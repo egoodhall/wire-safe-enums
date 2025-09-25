@@ -2,6 +2,7 @@ package com.egoodhall.ktools.wire.safe.enums
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import kotlinx.serialization.Serializable
 
 @JsonSerialize(
   using = WireSafeEnumSerializer::class,
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
   keyUsing = WireSafeEnumKeyDeserializer::class,
   contentUsing = WireSafeEnumDeserializer::class,
 )
+@Serializable(with = WireSafeEnumKSerializer::class)
 sealed interface WireSafeEnum<T : Enum<T>> {
   fun unwrap(): T?
 
@@ -30,7 +32,7 @@ sealed interface WireSafeEnum<T : Enum<T>> {
   data class Known<T : Enum<T>>(val value: T) : WireSafeEnum<T> {
     override fun unwrap(): T = value
 
-    override fun toString(): String = "WireSafeEnum(known=$value)"
+    override fun toString(): String = "WireSafeEnum.Known($value)"
   }
 
   /**
@@ -40,6 +42,6 @@ sealed interface WireSafeEnum<T : Enum<T>> {
   data class Unknown<T : Enum<T>>(val value: String) : WireSafeEnum<T> {
     override fun unwrap(): T? = null
 
-    override fun toString(): String = "WireSafeEnum(unknown=\"$value\")"
+    override fun toString(): String = "WireSafeEnum.Unknown(\"$value\")"
   }
 }
