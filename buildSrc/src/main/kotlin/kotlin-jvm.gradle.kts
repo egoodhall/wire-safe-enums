@@ -9,6 +9,9 @@ plugins {
   id("com.diffplug.spotless")
 }
 
+group = "com.egoodhall"
+version = "1.0-SNAPSHOT"
+
 repositories {
   mavenCentral()
 }

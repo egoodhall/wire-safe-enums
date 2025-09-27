@@ -1,25 +1,29 @@
-package com.egoodhall.ktools.wire.safe.enums.enums
+package com.egoodhall.ktools.wire.safe.enums.kotlinx
 
-import com.egoodhall.ktools.wire.safe.enums.WireSafeEnum
-import com.egoodhall.ktools.wire.safe.enums.decodeWireSafeEnum
-import com.egoodhall.ktools.wire.safe.enums.wireSafe
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.encodeToJsonElement
 import org.assertj.core.api.ObjectAssert
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class KotlinxTest {
   companion object {
+    val OBJECT_MAPPER = Json { serializersModule = WireSafeEnumModule }
     val KNOWN_VALUE = TestEnum.A.wireSafe()
-    val UNKNOWN_VALUE = Json.decodeWireSafeEnum<TestEnum>("\"B\"")
+    val UNKNOWN_VALUE = OBJECT_MAPPER.decodeFromString<WireSafeEnum<TestEnum>>("\"B\"")
   }
 
   enum class TestEnum {
     A
   }
 
-  @Serializable data class TestWrapper(val field: WireSafeEnum<TestEnum>)
+  @Serializable data class TestWrapper(@Contextual val field: WireSafeEnum<TestEnum>)
 
   @Nested
   inner class JsonDeserialization {
@@ -145,7 +149,7 @@ class KotlinxTest {
     }
 
     private inline fun <reified T> assertThatDeserializedJson(json: String): ObjectAssert<T> {
-      val result = Json.decodeFromString<T>(json)
+      val result = OBJECT_MAPPER.decodeFromString<T>(json)
       return ObjectAssert(result)
     }
   }
@@ -160,8 +164,7 @@ class KotlinxTest {
 
     @Test
     fun `it serializes unknown value to JSON`() {
-      val value = Json.decodeWireSafeEnum<TestEnum>("\"B\"")
-      assertThatSerializedJson(value).isEqualTo(JsonPrimitive("B"))
+      assertThatSerializedJson(UNKNOWN_VALUE).isEqualTo(JsonPrimitive("B"))
     }
 
     @Test
@@ -172,8 +175,7 @@ class KotlinxTest {
 
     @Test
     fun `it serializes unknown wrapped value to JSON`() {
-      val value = Json.decodeWireSafeEnum<TestEnum>("\"B\"")
-      assertThatSerializedJson(TestWrapper(value))
+      assertThatSerializedJson(TestWrapper(UNKNOWN_VALUE))
         .isEqualTo(JsonObject(mapOf("field" to JsonPrimitive("B"))))
     }
 
@@ -185,8 +187,7 @@ class KotlinxTest {
 
     @Test
     fun `it serializes unknown map value to JSON`() {
-      val value = Json.decodeWireSafeEnum<TestEnum>("\"B\"")
-      assertThatSerializedJson(mapOf("field" to value))
+      assertThatSerializedJson(mapOf("field" to UNKNOWN_VALUE))
         .isEqualTo(JsonObject(mapOf("field" to JsonPrimitive("B"))))
     }
 
@@ -198,8 +199,7 @@ class KotlinxTest {
 
     @Test
     fun `it serializes unknown map key to JSON`() {
-      val value = Json.decodeWireSafeEnum<TestEnum>("\"B\"")
-      assertThatSerializedJson(mapOf(value to "field"))
+      assertThatSerializedJson(mapOf(UNKNOWN_VALUE to "field"))
         .isEqualTo(JsonObject(mapOf("B" to JsonPrimitive("field"))))
     }
 
@@ -211,8 +211,8 @@ class KotlinxTest {
 
     @Test
     fun `it serializes unknown list element to JSON`() {
-      val value = Json.decodeWireSafeEnum<TestEnum>("\"B\"")
-      assertThatSerializedJson(listOf(value)).isEqualTo(JsonArray(listOf(JsonPrimitive("B"))))
+      assertThatSerializedJson(listOf(UNKNOWN_VALUE))
+        .isEqualTo(JsonArray(listOf(JsonPrimitive("B"))))
     }
 
     @Test
@@ -223,12 +223,12 @@ class KotlinxTest {
 
     @Test
     fun `it serializes unknown set element to JSON`() {
-      val value = Json.decodeWireSafeEnum<TestEnum>("\"B\"")
-      assertThatSerializedJson(setOf(value)).isEqualTo(JsonArray(listOf(JsonPrimitive("B"))))
+      assertThatSerializedJson(setOf(UNKNOWN_VALUE))
+        .isEqualTo(JsonArray(listOf(JsonPrimitive("B"))))
     }
 
     private inline fun <reified T> assertThatSerializedJson(pojo: T): ObjectAssert<JsonElement> {
-      val json = Json.encodeToJsonElement<T>(pojo)
+      val json = OBJECT_MAPPER.encodeToJsonElement<T>(pojo)
       return ObjectAssert(json)
     }
   }

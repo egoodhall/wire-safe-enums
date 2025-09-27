@@ -1,8 +1,7 @@
-package com.egoodhall.ktools.wire.safe.enums.enums
+package com.egoodhall.ktools.wire.safe.enums.kotlinx.jackson
 
-import com.egoodhall.ktools.wire.safe.enums.WireSafeEnum
-import com.egoodhall.ktools.wire.safe.enums.readWireSafeEnum
-import com.egoodhall.ktools.wire.safe.enums.wireSafe
+import com.egoodhall.ktools.wire.safe.enums.kotlinx.WireSafeEnum
+import com.egoodhall.ktools.wire.safe.enums.kotlinx.wireSafe
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -10,17 +9,21 @@ import com.fasterxml.jackson.databind.node.BooleanNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.assertj.core.api.InstanceOfAssertFactories.LIST
-import org.assertj.core.api.InstanceOfAssertFactories.MAP
+import org.assertj.core.api.InstanceOfAssertFactories
 import org.assertj.core.api.ObjectAssert
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class JacksonTest {
   companion object {
-    val OBJECT_MAPPER = ObjectMapper().registerKotlinModule()
-    val KNOWN_VALUE = TestEnum.A.wireSafe()
-    val UNKNOWN_VALUE = OBJECT_MAPPER.readWireSafeEnum<TestEnum>("B")
+    val OBJECT_MAPPER =
+      ObjectMapper().apply {
+        registerKotlinModule()
+        registerModule(WireSafeEnumModule())
+      }
+    val KNOWN_VALUE: WireSafeEnum<TestEnum> = TestEnum.A.wireSafe()
+    val UNKNOWN_VALUE: WireSafeEnum<TestEnum> =
+      OBJECT_MAPPER.readValue("\"B\"", object : TypeReference<WireSafeEnum<TestEnum>>() {})
   }
 
   enum class TestEnum {
@@ -92,7 +95,7 @@ class JacksonTest {
       }
     """
       ) {
-        asInstanceOf(MAP).containsEntry(KNOWN_VALUE, true)
+        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry(KNOWN_VALUE, true)
       }
     }
 
@@ -105,7 +108,7 @@ class JacksonTest {
       }
     """
       ) {
-        asInstanceOf(MAP).containsEntry(UNKNOWN_VALUE, true)
+        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry(UNKNOWN_VALUE, true)
       }
     }
 
@@ -118,7 +121,7 @@ class JacksonTest {
       }
     """
       ) {
-        asInstanceOf(MAP).containsEntry("value", KNOWN_VALUE)
+        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry("value", KNOWN_VALUE)
       }
     }
 
@@ -131,7 +134,7 @@ class JacksonTest {
       }
     """
       ) {
-        asInstanceOf(MAP).containsEntry("value", UNKNOWN_VALUE)
+        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry("value", UNKNOWN_VALUE)
       }
     }
 
@@ -142,7 +145,7 @@ class JacksonTest {
         ["A"]
       """
       ) {
-        asInstanceOf(LIST).containsExactly(KNOWN_VALUE)
+        asInstanceOf(InstanceOfAssertFactories.LIST).containsExactly(KNOWN_VALUE)
       }
     }
 
@@ -153,7 +156,7 @@ class JacksonTest {
         ["B"]
       """
       ) {
-        asInstanceOf(LIST).containsExactly(UNKNOWN_VALUE)
+        asInstanceOf(InstanceOfAssertFactories.LIST).containsExactly(UNKNOWN_VALUE)
       }
     }
 
