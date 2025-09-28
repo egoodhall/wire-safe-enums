@@ -27,12 +27,19 @@ class WireSafeEnumAdapterFactory : JsonAdapter.Factory {
 class WireSafeEnumAdapter<T : Enum<T>>(private val delegate: JsonAdapter<T>) :
   JsonAdapter<WireSafeEnum<T>>() {
   override fun fromJson(reader: JsonReader): WireSafeEnum<T>? {
-    try {
-      delegate.fromJson(reader.peekJson())
+    return try {
+      delegate
+        .fromJson(reader.peekJson())
+        // If we were able to successfully read the value, we can
+        // "forward" the reader to the next token. Since WireSafeEnum
+        // is intended to handle unknown values, we don't want to call
+        // skipName or skipValue, as that'll throw an exception with
+        // certain configurations of the reader.
+        ?.also { reader.nextSource() }
+        ?.let { WireSafeEnum.Known(it) }
     } catch (_: Exception) {
-      return WireSafeEnum.Unknown(reader.nextString())
+      WireSafeEnum.Unknown(reader.nextString())
     }
-    return delegate.fromJson(reader)?.let { WireSafeEnum.of(it) }
   }
 
   override fun toJson(writer: JsonWriter, value: WireSafeEnum<T>?) {
