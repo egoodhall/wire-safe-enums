@@ -1,19 +1,20 @@
-package com.egoodhall.wire.safe.enums.moshi
+package com.egoodhall.wire.safe.enums
 
-import com.egoodhall.wire.safe.enums.WireSafeEnum
-import com.egoodhall.wire.safe.enums.wireSafe
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.encodeToJsonElement
 import org.assertj.core.api.ObjectAssert
-import org.assertj.core.api.StringAssert
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class MoshiTest {
+class KotlinxTest {
   companion object {
-    val MOSHI: Moshi =
-      Moshi.Builder().add(WireSafeEnumAdapterFactory()).addLast(KotlinJsonAdapterFactory()).build()
+    val JSON = Json { serializersModule = WireSafeEnumModule }
     val KNOWN_VALUE: WireSafeEnum<TestEnum> = TestEnum.A.wireSafe()
     val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.unknown("B")
   }
@@ -22,7 +23,7 @@ class MoshiTest {
     A
   }
 
-  data class TestWrapper(val field: WireSafeEnum<TestEnum>)
+  @Serializable data class TestWrapper(@Contextual val field: WireSafeEnum<TestEnum>)
 
   @Nested
   inner class JsonDeserialization {
@@ -147,9 +148,8 @@ class MoshiTest {
         .isEqualTo(setOf(UNKNOWN_VALUE))
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private inline fun <reified T> assertThatDeserializedJson(json: String): ObjectAssert<T> {
-      val result = MOSHI.adapter<T>().fromJson(json)
+      val result = JSON.decodeFromString<T>(json)
       return ObjectAssert(result)
     }
   }
@@ -159,140 +159,77 @@ class MoshiTest {
 
     @Test
     fun `it serializes known value to JSON`() {
-      assertThatSerializedJson(TestEnum.A.wireSafe())
-        .isEqualTo(
-          """
-        "A"
-      """
-            .trimIndent()
-        )
+      assertThatSerializedJson(TestEnum.A.wireSafe()).isEqualTo(JsonPrimitive("A"))
     }
 
     @Test
     fun `it serializes unknown value to JSON`() {
-      assertThatSerializedJson(UNKNOWN_VALUE)
-        .isEqualTo(
-          """
-        "B"
-      """
-            .trimIndent()
-        )
+      assertThatSerializedJson(UNKNOWN_VALUE).isEqualTo(JsonPrimitive("B"))
     }
 
     @Test
     fun `it serializes known wrapped value to JSON`() {
       assertThatSerializedJson(TestWrapper(TestEnum.A.wireSafe()))
-        .isEqualTo(
-          """
-          {"field":"A"}
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonObject(mapOf("field" to JsonPrimitive("A"))))
     }
 
     @Test
     fun `it serializes unknown wrapped value to JSON`() {
       assertThatSerializedJson(TestWrapper(UNKNOWN_VALUE))
-        .isEqualTo(
-          """
-          {"field":"B"}
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonObject(mapOf("field" to JsonPrimitive("B"))))
     }
 
     @Test
     fun `it serializes known map value to JSON`() {
       assertThatSerializedJson(mapOf("field" to TestEnum.A.wireSafe()))
-        .isEqualTo(
-          """
-          {"field":"A"}
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonObject(mapOf("field" to JsonPrimitive("A"))))
     }
 
     @Test
     fun `it serializes unknown map value to JSON`() {
       assertThatSerializedJson(mapOf("field" to UNKNOWN_VALUE))
-        .isEqualTo(
-          """
-          {"field":"B"}
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonObject(mapOf("field" to JsonPrimitive("B"))))
     }
 
     @Test
     fun `it serializes known map key to JSON`() {
       assertThatSerializedJson(mapOf(TestEnum.A.wireSafe() to "field"))
-        .isEqualTo(
-          """
-          {"A":"field"}
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonObject(mapOf("A" to JsonPrimitive("field"))))
     }
 
     @Test
     fun `it serializes unknown map key to JSON`() {
       assertThatSerializedJson(mapOf(UNKNOWN_VALUE to "field"))
-        .isEqualTo(
-          """
-          {"B":"field"}
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonObject(mapOf("B" to JsonPrimitive("field"))))
     }
 
     @Test
     fun `it serializes known list element to JSON`() {
       assertThatSerializedJson(listOf(TestEnum.A.wireSafe()))
-        .isEqualTo(
-          """
-          ["A"]
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonArray(listOf(JsonPrimitive("A"))))
     }
 
     @Test
     fun `it serializes unknown list element to JSON`() {
       assertThatSerializedJson(listOf(UNKNOWN_VALUE))
-        .isEqualTo(
-          """
-          ["B"]
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonArray(listOf(JsonPrimitive("B"))))
     }
 
     @Test
     fun `it serializes known set element to JSON`() {
       assertThatSerializedJson(setOf(TestEnum.A.wireSafe()))
-        .isEqualTo(
-          """
-          ["A"]
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonArray(listOf(JsonPrimitive("A"))))
     }
 
     @Test
     fun `it serializes unknown set element to JSON`() {
       assertThatSerializedJson(setOf(UNKNOWN_VALUE))
-        .isEqualTo(
-          """
-          ["B"]
-        """
-            .trimIndent()
-        )
+        .isEqualTo(JsonArray(listOf(JsonPrimitive("B"))))
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private inline fun <reified T> assertThatSerializedJson(pojo: T): StringAssert {
-      val json = MOSHI.adapter<T>().toJson(pojo)
-      return StringAssert(json)
+    private inline fun <reified T> assertThatSerializedJson(pojo: T): ObjectAssert<JsonElement> {
+      val json = JSON.encodeToJsonElement<T>(pojo)
+      return ObjectAssert(json)
     }
   }
 }

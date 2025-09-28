@@ -12,7 +12,7 @@ plugins {
 
 
 // Project modules
-rootProject.name = "ktools"
+rootProject.name = "wire-safe-enums-parent"
 include(":wire-safe-enums")
 include("wire-safe-enums-jackson")
 include("wire-safe-enums-kotlinx")

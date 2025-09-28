@@ -1,23 +1,34 @@
 # ktools
 
-This project uses [Gradle](https://gradle.org/).
-To build and run the application, use the *Gradle* tool window by clicking the Gradle icon in the right-hand toolbar,
-or run it directly from the terminal:
+Kotlin utilities
 
-* Run `./gradlew run` to build and run the application.
-* Run `./gradlew build` to only build the application.
-* Run `./gradlew check` to run all checks, including tests.
-* Run `./gradlew clean` to clean all build outputs.
+## Wire-safe enums
 
-Note the usage of the Gradle Wrapper (`./gradlew`).
-This is the suggested way to use Gradle in production projects.
+Wrapper class for enums that supports deserialization of unknown enum values. This is
+especially useful when handling enums sent across the wire between different JVMs, where
+an enum value may not be known.
 
-[Learn more about the Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html).
+### API
 
-[Learn more about Gradle tasks](https://docs.gradle.org/current/userguide/command_line_interface.html#common_tasks).
+A `WireSafeEnum` can be either `Known` (the value is known
+to the current JVM) or `Unknown` (the value is not known to the current JVM). When deserializing
+an enum, if the string representation can be deserialized
 
-This project follows the suggested multi-module setup and consists of the `app` and `utils` subprojects.
-The shared build logic was extracted to a convention plugin located in `buildSrc`.
+```
+```
 
-This project uses a version catalog (see `gradle/libs.versions.toml`) to declare and version dependencies
-and both a build cache and a configuration cache (see `gradle.properties`).
+### JSON Serialization
+
+#### Jackson
+
+Install `WireSafeEnumModule` into the `ObjectMapper` being used:
+
+```kotlin
+val objectMapper = ObjectMapper().apply {
+  registerKotlinModule()
+  registerModule(WireSafeEnumModule())
+}
+```
+
+That will register the necessary `JsonSerializer`s and `JsonDeserializer`s to handle
+transforming 

@@ -1,6 +1,6 @@
 package com.egoodhall.wire.safe.enums.moshi
 
-import com.egoodhall.ktools.wire.safe.enums.kotlinx.WireSafeEnum
+import com.egoodhall.wire.safe.enums.WireSafeEnum
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
@@ -8,6 +8,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.rawType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import kotlin.jvm.java
 
 class WireSafeEnumAdapterFactory : JsonAdapter.Factory {
   override fun create(type: Type, annotations: Set<Annotation>, moshi: Moshi): JsonAdapter<*>? {
@@ -36,17 +37,18 @@ class WireSafeEnumAdapter<T : Enum<T>>(private val delegate: JsonAdapter<T>) :
         // skipName or skipValue, as that'll throw an exception with
         // certain configurations of the reader.
         ?.also { reader.nextSource() }
-        ?.let { WireSafeEnum.Known(it) }
+        ?.let { WireSafeEnum.known(it) }
     } catch (_: Exception) {
-      WireSafeEnum.Unknown(reader.nextString())
+      WireSafeEnum.unknown(reader.nextString())
     }
   }
 
   override fun toJson(writer: JsonWriter, value: WireSafeEnum<T>?) {
-    when (value) {
-      is WireSafeEnum.Known<T> -> delegate.toJson(writer, value.value)
-      is WireSafeEnum.Unknown<T> -> writer.value(value.value)
-      null -> writer.nullValue()
+    if (value == null) {
+      writer.nullValue()
+      return
     }
+
+    value.consume(known = { delegate.toJson(writer, it) }, unknown = { writer.value(it) })
   }
 }
