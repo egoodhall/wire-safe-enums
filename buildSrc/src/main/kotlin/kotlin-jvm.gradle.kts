@@ -21,6 +21,7 @@ kotlin {
 }
 
 spotless {
+  // Kotlin source code formatting
   kotlin {
     ktfmt().googleStyle().configure {
       it.setMaxWidth(100)
@@ -30,6 +31,7 @@ spotless {
       it.setManageTrailingCommas(true)
     }
   }
+  // Gradle build script formatting
   kotlinGradle {
     ktfmt().googleStyle().configure {
       it.setMaxWidth(100)
@@ -41,8 +43,14 @@ spotless {
   }
 }
 
+val libs = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 tasks.withType<Test>().configureEach {
   useJUnitPlatform()
+
+  dependencies {
+    testImplementation(libs.findLibrary("assertj-core").get())
+    testImplementation(kotlin("test"))
+  }
 
   testLogging {
     events(

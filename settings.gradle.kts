@@ -16,4 +16,4 @@ rootProject.name = "ktools"
 include(":wire-safe-enums")
 include("wire-safe-enums-jackson")
 include("wire-safe-enums-kotlinx")
-//include("wire-safe-enums-gson")
+include("wire-safe-enums-moshi")

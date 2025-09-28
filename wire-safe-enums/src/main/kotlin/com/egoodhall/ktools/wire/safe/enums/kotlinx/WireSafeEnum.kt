@@ -1,6 +1,6 @@
 package com.egoodhall.ktools.wire.safe.enums.kotlinx
 
-sealed abstract class WireSafeEnum<T : Enum<T>> {
+sealed class WireSafeEnum<T : Enum<T>> : Comparable<WireSafeEnum<T>> {
   abstract fun unwrap(): T?
 
   companion object {
@@ -18,6 +18,12 @@ sealed abstract class WireSafeEnum<T : Enum<T>> {
     override fun unwrap(): T = value
 
     override fun toString(): String = "WireSafeEnum.Known(${value::class.simpleName}.$value)"
+
+    override fun compareTo(other: WireSafeEnum<T>): Int =
+      when (other) {
+        is Known -> value.compareTo(other.value)
+        is Unknown -> -1
+      }
   }
 
   /**
@@ -28,5 +34,11 @@ sealed abstract class WireSafeEnum<T : Enum<T>> {
     override fun unwrap(): T? = null
 
     override fun toString(): String = "WireSafeEnum.Unknown(\"$value\")"
+
+    override fun compareTo(other: WireSafeEnum<T>): Int =
+      when (other) {
+        is Unknown -> value.compareTo(other.value)
+        is Known -> -1
+      }
   }
 }

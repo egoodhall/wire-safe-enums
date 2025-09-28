@@ -5,8 +5,5 @@ plugins {
 
 dependencies {
   api(project(":wire-safe-enums"))
-  implementation(libs.kotlinx.serialization.json)
-
-  testImplementation(kotlin("test"))
-  testImplementation(libs.assertj.core)
+  implementation(libs.bundles.kotlinx)
 }
