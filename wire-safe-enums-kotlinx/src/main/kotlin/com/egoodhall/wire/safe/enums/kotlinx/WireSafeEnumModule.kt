@@ -1,5 +1,8 @@
-package com.egoodhall.wire.safe.enums
+package com.egoodhall.wire.safe.enums.kotlinx
 
+import com.egoodhall.wire.safe.enums.Known
+import com.egoodhall.wire.safe.enums.Unknown
+import com.egoodhall.wire.safe.enums.WireSafeEnum
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic

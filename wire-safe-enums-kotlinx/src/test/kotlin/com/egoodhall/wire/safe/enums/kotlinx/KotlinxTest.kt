@@ -1,5 +1,7 @@
-package com.egoodhall.wire.safe.enums
+package com.egoodhall.wire.safe.enums.kotlinx
 
+import com.egoodhall.wire.safe.enums.WireSafeEnum
+import com.egoodhall.wire.safe.enums.wireSafe
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

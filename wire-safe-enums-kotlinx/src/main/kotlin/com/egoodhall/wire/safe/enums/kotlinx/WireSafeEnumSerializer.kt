@@ -1,5 +1,6 @@
-package com.egoodhall.wire.safe.enums
+package com.egoodhall.wire.safe.enums.kotlinx
 
+import com.egoodhall.wire.safe.enums.WireSafeEnum
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -24,9 +25,9 @@ internal class WireSafeEnumSerializer<T : Enum<T>>(private val delegate: KSerial
   override fun deserialize(decoder: Decoder): WireSafeEnum<T> {
     val tree = decoder.decodeSerializableValue(JsonElement.serializer())
     return try {
-      WireSafeEnum.known(Json.decodeFromJsonElement(delegate, tree))
+      WireSafeEnum.Companion.known(Json.decodeFromJsonElement(delegate, tree))
     } catch (_: Exception) {
-      WireSafeEnum.unknown(Json.decodeFromJsonElement(String.serializer(), tree))
+      WireSafeEnum.Companion.unknown(Json.decodeFromJsonElement(String.serializer(), tree))
     }
   }
 }
