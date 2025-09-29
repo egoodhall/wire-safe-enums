@@ -4,29 +4,69 @@ Wrapper class for enums that supports deserialization of unknown enum values. Th
 especially useful when handling enums sent across the wire between different JVMs, where
 an enum value may not be known.
 
+## Example
+
+Suppose we run a custom tee shirt printing business. In this example, we have two services:
+
+- `inventory-service` - tracks how many shirts are available in each size (`SM`, `MD`, `LG`), material, etc.
+- `print-service` - receives requests to print shirts, and updates the inventory via `inventory-service`
+
+Let's say the sizes we support are represented as an enum in a shared library, and that we want
+to add a new `XL` shirt size:
+```kotlin
+enum class TeeShirtSize {
+  SM,
+  MD,
+  LG,
+  XL, // New size!
+}
+```
+Before it's safe to use the new value, **both** `inventory-service` and `print-service` would
+need to be deployed. If either service has not been deployed with the updated enum, its JSON
+parsing library will fail to parse `"XL"`, because it's not one of the known `TeeShirtSize`
+values in the JVM. 
+
+```mermaid
+flowchart LR
+    PrintService["`print-service
+    SM|MD|LG|XL
+    `"]
+    InventoryService["`inventory-service
+    SM|MD|LG
+    `"]
+    
+    PrintService -- XL --> InventoryService
+```
+
+In the example above, `print-service` has been deployed since the shared library was updated, so it
+knows about the new `XL` value. We can see, though, that `inventory-service` has not yet been deployed,
+so it's unaware of the new enum constant. This means that when it receives a JSON value of `"XL"` from
+`print-service`, it will fail to deserialize the `TeeShirtSize`.
+
+`WireSafeEnum` prevents such JSON deserialization failures, by deserializing into "known" or "unknown
+wrapper types, which allows more graceful handling of unknown values. This is important because it
+relaxes the requirements for distributed systems to be deployed in specific (and strict) order before
+new values may be used.
+
+> [!IMPORTANT]
+> Note: `WireSafeEnum` does not solve the issue of actually handling the unknown values. It simply
+> provides a more controlled way to manage unknown value deserialization (and re-serialization).
+> You'll still need to figure out what behavior makes sense for your use-case.
+
 ## API
 
 A `WireSafeEnum` can be either `Known` (the value is known to the current JVM) or
 `Unknown` (the value is not known to the current JVM). Convenience methods are available
 for constructing instances of `WireSafeEnum`, as well as an extension method on all enums
-to allow easy conversion
+to allow easy conversion.
 
 ```kotlin
-enum class TeeShirtSize {
-  XS,
-  SM,
-  MD,
-  LG,
-  XL
-}
-
-
 // Extension method provided for wrapping
 val known = TeeShirtSize.MD.wireSafe()
 
 // Known and Unknown can be created via factory methods
 val otherKnown = WireSafeEnum.known(TeeShirtSize.MD)
-val unknown = WireSafeEnum.unknown("XXL")
+val unknown = WireSafeEnum.unknown("XL")
 
 // Unwrap using helper method
 val unwrappedKnown: TeeShirtSize? = known.unwrap() // TeeShirtSize.MD
@@ -74,8 +114,8 @@ val known = mapper.readValue<WireSafeEnum<TeeShirtSize>>("\"MD\"") // Known(TeeS
 val knownJson = mapper.writeValueAsString(known) // "MD"
 
 // Use the ObjectMapper to convert *unknown* values to/from JSON
-val unknown = mapper.readValue<WireSafeEnum<TeeShirtSize>>("\"XXL\"") // Unknown("XXL")
-val unknownJson = mapper.writeValueAsString(unknown) // "XXL"
+val unknown = mapper.readValue<WireSafeEnum<TeeShirtSize>>("\"XL\"") // Unknown("XL")
+val unknownJson = mapper.writeValueAsString(unknown) // "XL"
 ```
 
 </details>
@@ -112,8 +152,8 @@ val known = mapper.decodeFromString<WireSafeEnum<TeeShirtSize>>("\"MD\"") // Kno
 val knownJson = mapper.encodeToString(known) // "MD"
 
 // Use the Json instance to convert *unknown* values to/from JSON
-val unknown = mapper.decodeFromString<WireSafeEnum<TeeShirtSize>>("\"XXL\"") // Unknown("XXL")
-val unknownJson = mapper.encodeToString(unknown) // "XXL"
+val unknown = mapper.decodeFromString<WireSafeEnum<TeeShirtSize>>("\"XL\"") // Unknown("XL")
+val unknownJson = mapper.encodeToString(unknown) // "XL"
 ```
 
 </details>
@@ -156,8 +196,8 @@ val known = adapter.fromJson("\"MD\"") // Known(TeeShirtSize.MD)
 val knownJson = adapter.toJson(known) // "MD"
 
 // Use the adapter to convert *unknown* values to/from JSON
-val unknown = adapter.fromJson("\"XXL\"") // Unknown("XXL")
-val unknownJson = adapter.toJson(unknown) // "XXL"
+val unknown = adapter.fromJson("\"XL\"") // Unknown("XL")
+val unknownJson = adapter.toJson(unknown) // "XL"
 ```
 
 </details>
