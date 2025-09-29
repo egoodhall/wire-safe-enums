@@ -43,13 +43,13 @@ knows about the new `XL` value. We can see, though, that `inventory-service` has
 so it's unaware of the new enum constant. This means that when it receives a JSON value of `"XL"` from
 `print-service`, it will fail to deserialize the `TeeShirtSize`.
 
-`WireSafeEnum` prevents such JSON deserialization failures, by deserializing into "known" or "unknown
-wrapper types, which allows more graceful handling of unknown values. This is important because it
-relaxes the requirements for distributed systems to be deployed in specific (and strict) order before
-new values may be used.
+`WireSafeEnum` prevents such JSON deserialization failures, by deserializing into a "known" or
+"unknown" wrapper type, which allows more graceful handling of unknown values. This is important
+because it relaxes the requirements for distributed systems to be deployed in specific (and strict)
+order before new values may be used.
 
-> [!IMPORTANT]
-> Note: `WireSafeEnum` does not solve the issue of actually handling the unknown values. It simply
+> [!NOTE]
+> `WireSafeEnum` does not solve the issue of actually handling the unknown values. It simply
 > provides a more controlled way to manage unknown value deserialization (and re-serialization).
 > You'll still need to figure out what behavior makes sense for your use-case.
 
