@@ -8,7 +8,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.rawType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import kotlin.jvm.java
 
 class WireSafeEnumAdapterFactory : JsonAdapter.Factory {
   override fun create(type: Type, annotations: Set<Annotation>, moshi: Moshi): JsonAdapter<*>? {
