@@ -13,6 +13,8 @@ sealed class WireSafeEnum<T : Enum<T>> : Comparable<WireSafeEnum<T>> {
       is Unknown<T> -> unknown(value)
     }
 
+  fun isKnown(): Boolean = match(known = { true }, unknown = { false })
+
   fun unwrap(): T? = match(known = { it }, unknown = { null })
 
   fun consume(known: (T) -> Unit, unknown: (String) -> Unit) = match(known, unknown)

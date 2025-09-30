@@ -1,18 +1,14 @@
 package com.egoodhall.wire.safe.enums.jackson
 
-import com.egoodhall.wire.safe.enums.Known
-import com.egoodhall.wire.safe.enums.Unknown
 import com.egoodhall.wire.safe.enums.WireSafeEnum
+import com.egoodhall.wire.safe.enums.assertj.WireSafeEnumAssert
 import com.egoodhall.wire.safe.enums.wireSafe
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.BooleanNode
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.assertj.core.api.InstanceOfAssertFactories
 import org.assertj.core.api.ObjectAssert
+import org.assertj.core.api.StringAssert
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -37,136 +33,87 @@ class JacksonTest {
   inner class JsonDeserialization {
     @Test
     fun `it deserializes from JSON`() {
-      assertThatDeserializedJson<WireSafeEnum<TestEnum>>(
-        """
-    "A"      
-  """
-      ) {
-        extracting { it.unwrap() }.isEqualTo(TestEnum.A)
-        matches { it is Known<TestEnum> }
-      }
+      assertThatDeserializedJson<WireSafeEnum<TestEnum>>("\"A\"")
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(KNOWN_VALUE)
     }
 
     @Test
     fun `it handles unknown JSON values`() {
-      assertThatDeserializedJson<WireSafeEnum<TestEnum>>(
-        """
-    "B"
-  """
-      ) {
-        extracting { it.unwrap() }.isNull()
-        matches { it is Unknown<TestEnum> }
-      }
+      assertThatDeserializedJson<WireSafeEnum<TestEnum>>("\"B\"")
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(UNKNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes known value from wrapped JSON`() {
-      assertThatDeserializedJson<TestWrapper>(
-        """
-      {
-        "field": "A"
-      }
-    """
-      ) {
-        extracting { it.field.unwrap() }.isEqualTo(TestEnum.A)
-        matches { it.field is Known<TestEnum> }
-      }
+      assertThatDeserializedJson<TestWrapper>("{ \"field\": \"A\" }")
+        .extracting { it.field }
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(KNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes unknown value from wrapped JSON`() {
-      assertThatDeserializedJson<TestWrapper>(
-        """
-      {
-        "field": "B"
-      }
-    """
-      ) {
-        extracting { it.field.unwrap() }.isNull()
-        matches { it.field is Unknown<TestEnum> }
-      }
+      assertThatDeserializedJson<TestWrapper>("{ \"field\": \"B\" }")
+        .extracting { it.field }
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(UNKNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes known map key from JSON map`() {
-      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, Boolean>>(
-        """
-      {
-        "A": true
-      }
-    """
-      ) {
-        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry(KNOWN_VALUE, true)
-      }
+      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, Boolean>>("{\"A\":true}")
+        .asInstanceOf(InstanceOfAssertFactories.MAP)
+        .containsKey(KNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes unknown map key from JSON map`() {
-      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, Boolean>>(
-        """
-      {
-        "B": true
-      }
-    """
-      ) {
-        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry(UNKNOWN_VALUE, true)
-      }
+      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, Boolean>>("{\"B\":true}")
+        .asInstanceOf(InstanceOfAssertFactories.MAP)
+        .containsKey(UNKNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes known map value from JSON map`() {
-      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>(
-        """
-      {
-        "value": "A"
-      }
-    """
-      ) {
-        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry("value", KNOWN_VALUE)
-      }
+      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>("{\"field\":\"A\"}")
+        .asInstanceOf(InstanceOfAssertFactories.MAP)
+        .extractingByKey("field")
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(KNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes unknown map value from JSON map`() {
-      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>(
-        """
-      {
-        "value": "B"
-      }
-    """
-      ) {
-        asInstanceOf(InstanceOfAssertFactories.MAP).containsEntry("value", UNKNOWN_VALUE)
-      }
+      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>("{\"field\":\"B\"}")
+        .asInstanceOf(InstanceOfAssertFactories.MAP)
+        .extractingByKey("field")
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(UNKNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes known element from JSON array`() {
-      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>(
-        """
-        ["A"]
-      """
-      ) {
-        asInstanceOf(InstanceOfAssertFactories.LIST).containsExactly(KNOWN_VALUE)
-      }
+      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>("[\"A\"]")
+        .asInstanceOf(InstanceOfAssertFactories.LIST)
+        .first()
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(KNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes unknown element from JSON array`() {
-      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>(
-        """
-        ["B"]
-      """
-      ) {
-        asInstanceOf(InstanceOfAssertFactories.LIST).containsExactly(UNKNOWN_VALUE)
-      }
+      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>("[\"B\"]")
+        .asInstanceOf(InstanceOfAssertFactories.LIST)
+        .first()
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
+        .isEqualTo(UNKNOWN_VALUE)
     }
 
-    private inline fun <reified T> assertThatDeserializedJson(
-      json: String,
-      assertions: ObjectAssert<T>.() -> Unit,
-    ) {
+    private inline fun <reified T> assertThatDeserializedJson(json: String): ObjectAssert<T> {
       val actual = OBJECT_MAPPER.readValue(json, object : TypeReference<T>() {})
-      ObjectAssert(actual).assertions()
+      return ObjectAssert(actual)
     }
   }
 
@@ -174,114 +121,67 @@ class JacksonTest {
   inner class JsonSerialization {
     @Test
     fun `it serializes known value to JSON`() {
-      assertThatSerializedJson(KNOWN_VALUE) { isEqualTo(TextNode.valueOf("A")) }
+      assertThatSerializedJson(KNOWN_VALUE).isEqualTo("\"A\"")
     }
 
     @Test
     fun `it serializes unknown value to JSON`() {
-      assertThatSerializedJson(UNKNOWN_VALUE) { isEqualTo(TextNode.valueOf("B")) }
+      assertThatSerializedJson(UNKNOWN_VALUE).isEqualTo("\"B\"")
     }
 
     @Test
     fun `it serializes known wrapped value to JSON`() {
-      assertThatSerializedJson(TestWrapper(KNOWN_VALUE)) {
-        isEqualTo(
-          OBJECT_MAPPER.nodeFactory.objectNode().apply {
-            set<ObjectNode>("field", TextNode.valueOf("A"))
-          }
-        )
-      }
+      assertThatSerializedJson(TestWrapper(KNOWN_VALUE)).isEqualTo("{\"field\":\"A\"}")
     }
 
     @Test
     fun `it serializes unknown wrapped value to JSON`() {
-      assertThatSerializedJson(TestWrapper(UNKNOWN_VALUE)) {
-        isEqualTo(
-          OBJECT_MAPPER.nodeFactory.objectNode().apply {
-            set<ObjectNode>("field", TextNode.valueOf("B"))
-          }
-        )
-      }
+      assertThatSerializedJson(TestWrapper(UNKNOWN_VALUE)).isEqualTo("{\"field\":\"B\"}")
     }
 
     @Test
     fun `it serializes known map key to JSON`() {
-      assertThatSerializedJson(mapOf(KNOWN_VALUE to true)) {
-        isEqualTo(
-          OBJECT_MAPPER.nodeFactory.objectNode().apply {
-            set<ObjectNode>("A", BooleanNode.valueOf(true))
-          }
-        )
-      }
+      assertThatSerializedJson(mapOf(KNOWN_VALUE to true)).isEqualTo("{\"A\":true}")
     }
 
     @Test
     fun `it serializes unknown map key to JSON`() {
-      assertThatSerializedJson(mapOf(UNKNOWN_VALUE to true)) {
-        isEqualTo(
-          OBJECT_MAPPER.nodeFactory.objectNode().apply {
-            set<ObjectNode>("B", BooleanNode.valueOf(true))
-          }
-        )
-      }
+      assertThatSerializedJson(mapOf(UNKNOWN_VALUE to true)).isEqualTo("{\"B\":true}")
     }
 
     @Test
     fun `it serializes known map value to JSON`() {
-      assertThatSerializedJson(mapOf("value" to KNOWN_VALUE)) {
-        isEqualTo(
-          OBJECT_MAPPER.nodeFactory.objectNode().apply {
-            set<ObjectNode>("value", TextNode.valueOf("A"))
-          }
-        )
-      }
+      assertThatSerializedJson(mapOf("field" to KNOWN_VALUE)).isEqualTo("{\"field\":\"A\"}")
     }
 
     @Test
     fun `it serializes unknown map value to JSON`() {
-      assertThatSerializedJson(mapOf("value" to UNKNOWN_VALUE)) {
-        isEqualTo(
-          OBJECT_MAPPER.nodeFactory.objectNode().apply {
-            set<ObjectNode>("value", TextNode.valueOf("B"))
-          }
-        )
-      }
+      assertThatSerializedJson(mapOf("field" to UNKNOWN_VALUE)).isEqualTo("{\"field\":\"B\"}")
     }
 
     @Test
     fun `it serializes known list element to JSON`() {
-      assertThatSerializedJson(listOf(KNOWN_VALUE)) {
-        isEqualTo(OBJECT_MAPPER.nodeFactory.arrayNode().apply { add(TextNode.valueOf("A")) })
-      }
+      assertThatSerializedJson(listOf(KNOWN_VALUE)).isEqualTo("[\"A\"]")
     }
 
     @Test
     fun `it serializes unknown list element to JSON`() {
-      assertThatSerializedJson(listOf(UNKNOWN_VALUE)) {
-        isEqualTo(OBJECT_MAPPER.nodeFactory.arrayNode().apply { add(TextNode.valueOf("B")) })
-      }
+      assertThatSerializedJson(listOf(UNKNOWN_VALUE)).isEqualTo("[\"B\"]")
     }
 
     @Test
     fun `it serializes known set element to JSON`() {
-      assertThatSerializedJson(setOf(KNOWN_VALUE)) {
-        isEqualTo(OBJECT_MAPPER.nodeFactory.arrayNode().apply { add(TextNode.valueOf("A")) })
-      }
+      assertThatSerializedJson(setOf(KNOWN_VALUE)).isEqualTo("[\"A\"]")
     }
 
     @Test
     fun `it serializes unknown set element to JSON`() {
-      assertThatSerializedJson(setOf(UNKNOWN_VALUE)) {
-        isEqualTo(OBJECT_MAPPER.nodeFactory.arrayNode().apply { add(TextNode.valueOf("B")) })
-      }
+      assertThatSerializedJson(setOf(UNKNOWN_VALUE)).isEqualTo("[\"B\"]")
     }
 
-    private inline fun <reified T> assertThatSerializedJson(
-      pojo: T,
-      assertions: ObjectAssert<JsonNode>.() -> Unit,
-    ) {
-      val json = OBJECT_MAPPER.convertValue(pojo, JsonNode::class.java)
-      ObjectAssert(json).assertions()
+    private inline fun <reified T> assertThatSerializedJson(pojo: T): StringAssert {
+      val json = OBJECT_MAPPER.writeValueAsString(pojo)
+      return StringAssert(json)
     }
   }
 }

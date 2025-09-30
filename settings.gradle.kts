@@ -14,6 +14,7 @@ plugins {
 // Project modules
 rootProject.name = "wire-safe-enums-parent"
 include(":wire-safe-enums")
+include("wire-safe-enums-assertj")
 include("wire-safe-enums-jackson")
 include("wire-safe-enums-kotlinx")
 include("wire-safe-enums-moshi")

@@ -32,121 +32,71 @@ class KotlinxTest {
 
     @Test
     fun `it deserializes known value from JSON`() {
-      assertThatDeserializedJson<WireSafeEnum<TestEnum>>(
-          """
-        "A"
-      """
-        )
-        .isEqualTo(KNOWN_VALUE)
+      assertThatDeserializedJson<WireSafeEnum<TestEnum>>("\"A\"").isEqualTo(KNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes unknown value from JSON`() {
-      assertThatDeserializedJson<WireSafeEnum<TestEnum>>(
-          """
-        "B"
-      """
-        )
-        .isEqualTo(UNKNOWN_VALUE)
+      assertThatDeserializedJson<WireSafeEnum<TestEnum>>("\"B\"").isEqualTo(UNKNOWN_VALUE)
     }
 
     @Test
     fun `it deserializes known wrapped value from JSON`() {
-      assertThatDeserializedJson<TestWrapper>(
-          """
-        {"field":"A"}
-      """
-        )
+      assertThatDeserializedJson<TestWrapper>("{\"field\":\"A\"}")
         .isEqualTo(TestWrapper(KNOWN_VALUE))
     }
 
     @Test
     fun `it deserializes unknown wrapped value from JSON`() {
-      assertThatDeserializedJson<TestWrapper>(
-          """
-        {"field":"B"}
-      """
-        )
+      assertThatDeserializedJson<TestWrapper>("{\"field\":\"B\"}")
         .isEqualTo(TestWrapper(UNKNOWN_VALUE))
     }
 
     @Test
     fun `it deserializes known map value from JSON`() {
-      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>(
-          """
-        {"field":"A"}
-      """
-        )
+      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>("{\"field\":\"A\"}")
         .isEqualTo(mapOf("field" to KNOWN_VALUE))
     }
 
     @Test
     fun `it deserializes unknown map value from JSON`() {
-      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>(
-          """
-        {"field":"B"}
-      """
-        )
+      assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>("{\"field\":\"B\"}")
         .isEqualTo(mapOf("field" to UNKNOWN_VALUE))
     }
 
     @Test
     fun `it deserializes known map key from JSON`() {
-      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, String>>(
-          """
-        {"A":"field"}
-      """
-        )
+      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, String>>("{\"A\":\"field\"}")
         .isEqualTo(mapOf(KNOWN_VALUE to "field"))
     }
 
     @Test
     fun `it deserializes unknown map key from JSON`() {
-      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, String>>(
-          """
-        {"B":"field"}
-      """
-        )
+      assertThatDeserializedJson<Map<WireSafeEnum<TestEnum>, String>>("{\"B\":\"field\"}")
         .isEqualTo(mapOf(UNKNOWN_VALUE to "field"))
     }
 
     @Test
     fun `it deserializes known list element from JSON`() {
-      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>(
-          """
-        ["A"]
-      """
-        )
+      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>("[\"A\"]")
         .isEqualTo(listOf(KNOWN_VALUE))
     }
 
     @Test
     fun `it deserializes unknown list element from JSON`() {
-      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>(
-          """
-        ["B"]
-      """
-        )
+      assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>("[\"B\"]")
         .isEqualTo(listOf(UNKNOWN_VALUE))
     }
 
     @Test
     fun `it deserializes known set element from JSON`() {
-      assertThatDeserializedJson<Set<WireSafeEnum<TestEnum>>>(
-          """
-        ["A"]
-      """
-        )
+      assertThatDeserializedJson<Set<WireSafeEnum<TestEnum>>>("[\"A\"]")
         .isEqualTo(setOf(KNOWN_VALUE))
     }
 
     @Test
     fun `it deserializes unknown set element from JSON`() {
-      assertThatDeserializedJson<Set<WireSafeEnum<TestEnum>>>(
-          """
-        ["B"]
-      """
-        )
+      assertThatDeserializedJson<Set<WireSafeEnum<TestEnum>>>("[\"B\"]")
         .isEqualTo(setOf(UNKNOWN_VALUE))
     }
 
