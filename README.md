@@ -4,7 +4,27 @@ Wrapper class for enums that supports deserialization of unknown enum values. Th
 especially useful when handling enums sent across the wire between different JVMs, where
 an enum value may not be known.
 
-## Example
+## API
+
+A `WireSafeEnum` can be either `Known` (the value is known to the current JVM) or
+`Unknown` (the value is not known to the current JVM). Convenience methods are available
+for constructing instances of `WireSafeEnum`, as well as an extension method on all enums
+to allow easy conversion.
+
+```kotlin
+// Extension method provided for wrapping
+val known = TeeShirtSize.MD.wireSafe()
+
+// Known and Unknown can be created via factory methods
+val otherKnown = WireSafeEnum.known(TeeShirtSize.MD)
+val unknown = WireSafeEnum.unknown("XL")
+
+// Unwrap using helper method
+val unwrappedKnown: TeeShirtSize? = known.unwrap() // TeeShirtSize.MD
+val unwrappedUnknown: TeeShirtSize? = unknown.unwrap() // null
+```
+
+## Why use WireSafeEnum?
 
 Suppose we run a custom tee shirt printing business. In this example, we have two services:
 
@@ -52,26 +72,6 @@ order before new values may be used.
 > `WireSafeEnum` does not solve the issue of actually handling the unknown values. It simply
 > provides a more controlled way to manage unknown value deserialization (and re-serialization).
 > You'll still need to figure out what behavior makes sense for your use-case.
-
-## API
-
-A `WireSafeEnum` can be either `Known` (the value is known to the current JVM) or
-`Unknown` (the value is not known to the current JVM). Convenience methods are available
-for constructing instances of `WireSafeEnum`, as well as an extension method on all enums
-to allow easy conversion.
-
-```kotlin
-// Extension method provided for wrapping
-val known = TeeShirtSize.MD.wireSafe()
-
-// Known and Unknown can be created via factory methods
-val otherKnown = WireSafeEnum.known(TeeShirtSize.MD)
-val unknown = WireSafeEnum.unknown("XL")
-
-// Unwrap using helper method
-val unwrappedKnown: TeeShirtSize? = known.unwrap() // TeeShirtSize.MD
-val unwrappedUnknown: TeeShirtSize? = unknown.unwrap() // null
-```
 
 ## JSON Serialization
 
