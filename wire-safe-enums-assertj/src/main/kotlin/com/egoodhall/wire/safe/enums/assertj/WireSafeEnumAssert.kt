@@ -1,11 +1,11 @@
 package com.egoodhall.wire.safe.enums.assertj
 
 import com.egoodhall.wire.safe.enums.WireSafeEnum
+import kotlin.reflect.KClass
+import kotlin.reflect.typeOf
 import org.assertj.core.api.InstanceOfAssertFactory
 import org.assertj.core.api.ObjectAssert
 import org.assertj.core.api.StringAssert
-import kotlin.reflect.KClass
-import kotlin.reflect.typeOf
 
 fun <T : Enum<T>> assertThat(actual: WireSafeEnum<T>): WireSafeEnumAssert<T> {
   return WireSafeEnumAssert(actual)
