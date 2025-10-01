@@ -137,6 +137,10 @@ onlyInCI {
   }
 }
 
+/////////////////////////////
+// CI configuration gating //
+/////////////////////////////
+
 fun onlyInCI(block: () -> Unit) {
   if (System.getenv("CI")?.takeIf(String::isNotBlank) != null) {
     block()
