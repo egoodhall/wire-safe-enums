@@ -111,7 +111,7 @@ publishing {
       maven {
         url = uri(
           when (version.toString().endsWith("-SNAPSHOT")) {
-            true -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            true -> "https://central.sonatype.com/repository/maven-snapshots/"
             false -> "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
           }
         )
