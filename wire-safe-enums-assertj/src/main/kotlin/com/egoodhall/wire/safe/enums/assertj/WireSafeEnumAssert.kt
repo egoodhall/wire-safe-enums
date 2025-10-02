@@ -16,6 +16,7 @@ class WireSafeEnumAssert<T : Enum<T>>(actual: WireSafeEnum<T>) :
   companion object {
     inline fun <reified T : Enum<T>> factory():
       InstanceOfAssertFactory<WireSafeEnum<T>, WireSafeEnumAssert<T>> {
+      @Suppress("UNCHECKED_CAST")
       val type = typeOf<WireSafeEnum<T>>().classifier as KClass<WireSafeEnum<T>>
       return InstanceOfAssertFactory(type.java) { t -> WireSafeEnumAssert(t) }
     }
