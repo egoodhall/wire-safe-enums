@@ -27,7 +27,19 @@ jobs:
           repository-cache: true
 
       - name: Build
+        id: build
         run: bazelisk build --logging=6 //...
 
       - name: Test
+        id: test
+        continue-on-error: true
         run: bazelisk test --logging=6 //...
+
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        if: steps.test.outcome == 'failure'
+        with:
+          name: test-logs
+          path: bazel-testlogs/**/test.log
+          compression-level: 9
+          retention-days: 7
