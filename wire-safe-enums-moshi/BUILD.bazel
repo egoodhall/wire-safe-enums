@@ -1,0 +1,46 @@
+load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS")
+load("@rules_kotlin//kotlin:core.bzl", "kt_ksp_plugin")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_test")
+load("@rules_jvm_external//:defs.bzl", "artifact")
+
+kt_ksp_plugin(
+    name = "moshi-kotlin-codegen",
+    processor_class = "com.squareup.moshi.kotlin.codegen.ksp.JsonClassSymbolProcessorProvider",
+    deps = [
+        artifact("com.squareup.moshi:moshi"),
+        artifact("com.squareup.moshi:moshi-kotlin"),
+        artifact("com.squareup.moshi:moshi-kotlin-codegen"),
+    ],
+)
+
+kt_jvm_library(
+    name = "wire-safe-enums-moshi",
+    srcs = glob(["src/main/kotlin/**/*.kt"]),
+    visibility = ["//visibility:public"],
+    plugins = [":moshi-kotlin-codegen"],
+    deps = [
+        "//wire-safe-enums:wire-safe-enums",
+        artifact("com.squareup.moshi:moshi"),
+        artifact("com.squareup.moshi:moshi-kotlin"),
+        artifact("com.fasterxml.jackson.module:jackson-module-kotlin")
+    ]
+)
+
+kt_jvm_test(
+    name = "wire-safe-enums-moshi-test",
+    srcs = glob(["src/test/kotlin/**/*.kt"]),
+    main_class = "org.junit.platform.console.ConsoleLauncher",
+    args = ["discover", "--select-package=com.egoodhall.wire.safe.enums.moshi"],
+    runtime_deps = JUNIT5_DEPS,
+    deps = [
+        ":wire-safe-enums-moshi",
+        "//wire-safe-enums:wire-safe-enums",
+        "//wire-safe-enums-assertj:wire-safe-enums-assertj",
+        artifact("com.squareup.moshi:moshi"),
+        artifact("com.squareup.moshi:moshi-kotlin"),
+        artifact("org.assertj:assertj-core"),
+        artifact("org.junit.jupiter:junit-jupiter-api"),
+        artifact("org.junit.jupiter:junit-jupiter-params"),
+        artifact("org.junit.platform:junit-platform-console")
+    ]
+)

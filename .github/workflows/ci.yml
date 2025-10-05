@@ -22,5 +22,12 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
+      - name: Set up Bazelisk
+        uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+
       - name: Build and Test
-        run: ./gradlew build test spotlessCheck
+        run: bazel build //...
