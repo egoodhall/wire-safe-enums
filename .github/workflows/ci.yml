@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - '**'
-    branches-ignore:
-      - 'main'
 
 jobs:
   build:
@@ -29,5 +27,8 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
 
-      - name: Build and Test
-        run: bazel build //...
+      - name: Build
+        run: bazelisk build //...
+
+      - name: Test
+        run: bazelisk test //...
