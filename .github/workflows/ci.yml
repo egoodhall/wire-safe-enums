@@ -16,9 +16,8 @@ jobs:
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: '25'
+          java-version: '21'
           distribution: 'temurin'
-          cache: 'gradle'
 
       - name: Set up Bazelisk
         uses: bazel-contrib/setup-bazel@0.15.0
@@ -27,8 +26,19 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
 
-      - name: Build
-        run: bazelisk build //...
+      - name: Run build
+        id: build
+        run: bazelisk build --logging=6 //...
 
-      - name: Test
-        run: bazelisk test //...
+      - name: Run tests
+        id: test
+        run: bazelisk test --logging=6 //...
+
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        if: failure() && steps.test.outcome == 'failure'
+        with:
+          name: test-logs
+          path: bazel-testlogs/**/test.log
+          compression-level: 9
+          retention-days: 7
