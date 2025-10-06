@@ -26,18 +26,17 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
 
-      - name: Build
+      - name: Run build
         id: build
         run: bazelisk build --logging=6 //...
 
-      - name: Test
+      - name: Run tests
         id: test
-        continue-on-error: true
         run: bazelisk test --logging=6 //...
 
       - name: Upload test logs
         uses: actions/upload-artifact@v4
-        if: steps.test.outcome == 'failure'
+        if: failure() && steps.test.outcome == 'failure'
         with:
           name: test-logs
           path: bazel-testlogs/**/test.log
