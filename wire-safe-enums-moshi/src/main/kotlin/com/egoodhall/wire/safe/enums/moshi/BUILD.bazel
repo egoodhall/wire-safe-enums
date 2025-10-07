@@ -3,12 +3,12 @@ load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("@rules_jvm_external//:defs.bzl", "artifact")
 
 kt_ksp_plugin(
-    name = "moshi-kotlin-codegen",
+		name = "moshi-kotlin-codegen",
     processor_class = "com.squareup.moshi.kotlin.codegen.ksp.JsonClassSymbolProcessorProvider",
     deps = [
-        artifact("com.squareup.moshi:moshi"),
-        artifact("com.squareup.moshi:moshi-kotlin"),
-        artifact("com.squareup.moshi:moshi-kotlin-codegen"),
+		    artifact("com.squareup.moshi:moshi"),
+		    artifact("com.squareup.moshi:moshi-kotlin"),
+		    artifact("com.squareup.moshi:moshi-kotlin-codegen"),
     ],
 )
 
@@ -18,8 +18,8 @@ kt_jvm_library(
     visibility = ["//visibility:public"],
     plugins = [":moshi-kotlin-codegen"],
     deps = [
-        "//wire-safe-enums/src/main/kotlin/com/egoodhall/wire/safe/enums:wire-safe-enums",
-        artifact("org.jetbrains.kotlinx:kotlinx-serialization-json"),
-        artifact("com.fasterxml.jackson.module:jackson-module-kotlin")
+		    "//wire-safe-enums/src/main/kotlin/com/egoodhall/wire/safe/enums:wire-safe-enums",
+		    artifact("com.squareup.moshi:moshi"),
+		    artifact("com.squareup.moshi:moshi-kotlin")
     ]
 )

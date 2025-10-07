@@ -7,7 +7,6 @@ kt_jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         "//wire-safe-enums/src/main/kotlin/com/egoodhall/wire/safe/enums:wire-safe-enums",
-        artifact("org.jetbrains.kotlinx:kotlinx-serialization-json"),
-        artifact("com.fasterxml.jackson.module:jackson-module-kotlin")
+        artifact("org.jetbrains.kotlinx:kotlinx-serialization-json")
     ]
 )
