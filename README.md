@@ -16,8 +16,8 @@ to allow easy conversion.
 val known = TeeShirtSize.MD.wireSafe()
 
 // Known and Unknown can be created via factory methods
-val otherKnown = WireSafeEnum.known(TeeShirtSize.MD)
-val unknown = WireSafeEnum.unknown("XL")
+val otherKnown = WireSafeEnum.of(TeeShirtSize.MD)
+val unknown = WireSafeEnum.of("XL")
 
 // Unwrap using helper method
 val unwrappedKnown: TeeShirtSize? = known.unwrap() // TeeShirtSize.MD
