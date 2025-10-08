@@ -30,9 +30,9 @@ internal class WireSafeEnumDeserializer<T : Enum<T>> :
       ctxt.findRootValueDeserializer(enumType)
         ?: throw IllegalStateException("Unable to find deserializer for ${enumClass.simpleName}")
     return try {
-      WireSafeEnum.Companion.known(delegate.deserialize(parser, ctxt) as T)
+      WireSafeEnum.of(delegate.deserialize(parser, ctxt) as T)
     } catch (_: Exception) {
-      WireSafeEnum.Companion.unknown(parser.text!!)
+      WireSafeEnum.of(parser.text!!)
     }
   }
 
@@ -57,10 +57,9 @@ internal class WireSafeEnumKeyDeserializer<T : Enum<T>> :
       return null
     }
     return try {
-      @Suppress("UNCHECKED_CAST")
-      WireSafeEnum.Companion.known(delegate.deserializeKey(key, ctxt) as T)
+      @Suppress("UNCHECKED_CAST") WireSafeEnum.of(delegate.deserializeKey(key, ctxt) as T)
     } catch (_: Exception) {
-      WireSafeEnum.Companion.unknown(key)
+      WireSafeEnum.of(key)
     }
   }
 

@@ -7,6 +7,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
   kotlin("jvm")
   id("com.diffplug.spotless")
+  `java-library`
   `maven-publish`
   signing
 }
@@ -27,7 +28,24 @@ java {
   withJavadocJar()
 }
 
+sourceSets {
+  main {
+    java.srcDirs("src/main/java")
+    kotlin.srcDirs("src/main/kotlin")
+    resources.srcDirs("src/main/resources")
+  }
+  test {
+    java.srcDirs("src/test/java")
+    kotlin.srcDirs("src/test/kotlin")
+    resources.srcDirs("src/test/resources")
+  }
+}
+
 spotless {
+  // Java source code formatting
+  java {
+//    googleJavaFormat()
+  }
   // Kotlin source code formatting
   kotlin {
     ktfmt().googleStyle().configure {

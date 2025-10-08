@@ -36,9 +36,9 @@ class WireSafeEnumAdapter<T : Enum<T>>(private val delegate: JsonAdapter<T>) :
         // skipName or skipValue, as that'll throw an exception with
         // certain configurations of the reader.
         ?.also { reader.nextSource() }
-        ?.let { WireSafeEnum.known(it) }
+        ?.let { WireSafeEnum.of(it) }
     } catch (_: Exception) {
-      WireSafeEnum.unknown(reader.nextString())
+      WireSafeEnum.of(reader.nextString())
     }
   }
 

@@ -1,7 +1,5 @@
 package com.egoodhall.wire.safe.enums.kotlinx
 
-import com.egoodhall.wire.safe.enums.Known
-import com.egoodhall.wire.safe.enums.Unknown
 import com.egoodhall.wire.safe.enums.WireSafeEnum
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.modules.SerializersModule
@@ -10,8 +8,9 @@ import kotlinx.serialization.modules.polymorphic
 val WireSafeEnumModule = SerializersModule {
   contextual(WireSafeEnum::class) { wireSafeEnumSerializer(it[0]) }
   polymorphic(WireSafeEnum::class) {
-    contextual(Known::class) { wireSafeEnumSerializer(it[0]) }
-    contextual(Unknown::class) { wireSafeEnumSerializer(it[0]) }
+    WireSafeEnum::class.sealedSubclasses.forEach {
+      contextual(it) { wireSafeEnumSerializer(it[0]) }
+    }
   }
 }
 

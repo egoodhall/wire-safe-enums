@@ -6,4 +6,5 @@ plugins {
 dependencies {
   api(project(":wire-safe-enums"))
   implementation(libs.bundles.kotlinx)
+  implementation(kotlin("reflect"))
 }

@@ -15,7 +15,7 @@ class WireSafeEnumAssertTest {
 
   @Test
   fun `it asserts that type is known`() {
-    val actual = WireSafeEnum.known(TeeShirtSize.MD)
+    val actual = WireSafeEnum.of(TeeShirtSize.MD)
 
     assertThat(actual).isKnown()
     assertThat(actual).containsKnown(TeeShirtSize.MD)
@@ -24,7 +24,7 @@ class WireSafeEnumAssertTest {
 
   @Test
   fun `it asserts that type is unknown`() {
-    val actual = WireSafeEnum.unknown("XL")
+    val actual = WireSafeEnum.of("XL")
 
     assertThat(actual).isUnknown()
     assertThat(actual).containsUnknown("XL")

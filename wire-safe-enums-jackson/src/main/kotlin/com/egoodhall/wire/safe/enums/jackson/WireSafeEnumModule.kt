@@ -1,7 +1,5 @@
 package com.egoodhall.wire.safe.enums.jackson
 
-import com.egoodhall.wire.safe.enums.Known
-import com.egoodhall.wire.safe.enums.Unknown
 import com.egoodhall.wire.safe.enums.WireSafeEnum
 import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.DeserializationConfig
@@ -27,14 +25,12 @@ class WireSafeEnumModule : SimpleModule("wire-safe-enum") {
 }
 
 internal interface WireSafeEnumJacksonUtil {
-  fun <T> whenWireSafeEnum(type: JavaType, supplier: () -> T): T? {
-    return when (type.rawClass.kotlin) {
-      WireSafeEnum::class -> supplier()
-      Known::class -> supplier()
-      Unknown::class -> supplier()
-      else -> null
+  fun <T> whenWireSafeEnum(type: JavaType, supplier: () -> T): T? =
+    if (WireSafeEnum.isWireSafeEnum(type.rawClass)) {
+      supplier()
+    } else {
+      null
     }
-  }
 }
 
 internal class WireSafeEnumSerializers : Serializers.Base(), WireSafeEnumJacksonUtil {

@@ -15,7 +15,7 @@ class MoshiTest {
     val MOSHI: Moshi =
       Moshi.Builder().add(WireSafeEnumAdapterFactory()).addLast(KotlinJsonAdapterFactory()).build()
     val KNOWN_VALUE: WireSafeEnum<TestEnum> = TestEnum.A.wireSafe()
-    val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.unknown("B")
+    val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.of("B")
   }
 
   enum class TestEnum {
