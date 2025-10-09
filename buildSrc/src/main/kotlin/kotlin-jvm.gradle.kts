@@ -135,16 +135,11 @@ publishing {
 
     onlyInCI {
       maven {
-        url = uri(
-          when (version.toString().endsWith("-SNAPSHOT")) {
-            true -> "https://central.sonatype.com/repository/maven-snapshots/"
-            false -> "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-          }
-        )
-
+        name = "github-packages"
+        url = uri("https://maven.pkg.github.com/egoodhall/wire-safe-enums")
         credentials {
-          username = System.getenv("OSSRH_USERNAME")
-          password = System.getenv("OSSRH_PASSWORD")
+          username = System.getenv("GITHUB_ACTOR")
+          password = System.getenv("GITHUB_TOKEN")
         }
       }
     }
