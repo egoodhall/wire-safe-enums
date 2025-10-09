@@ -19,11 +19,21 @@ repositories {
   mavenCentral()
 }
 
+val jvmLanguageVersion = JavaLanguageVersion.of(11)
+val jvmVendor = JvmVendorSpec.ADOPTIUM
+
 kotlin {
-  jvmToolchain(11)
+  jvmToolchain {
+    languageVersion = jvmLanguageVersion
+    vendor = jvmVendor
+  }
 }
 
 java {
+  toolchain {
+    languageVersion = jvmLanguageVersion
+    vendor = jvmVendor
+  }
   withSourcesJar()
   withJavadocJar()
 }
@@ -44,7 +54,7 @@ sourceSets {
 spotless {
   // Java source code formatting
   java {
-//    googleJavaFormat()
+    palantirJavaFormat().formatJavadoc(true).style("PALANTIR")
   }
   // Kotlin source code formatting
   kotlin {
@@ -53,7 +63,6 @@ spotless {
       it.setBlockIndent(2)
       it.setContinuationIndent(2)
       it.setRemoveUnusedImports(true)
-      it.setManageTrailingCommas(true)
     }
   }
   // Gradle build script formatting
@@ -63,7 +72,6 @@ spotless {
       it.setBlockIndent(2)
       it.setContinuationIndent(2)
       it.setRemoveUnusedImports(true)
-      it.setManageTrailingCommas(true)
     }
   }
 }

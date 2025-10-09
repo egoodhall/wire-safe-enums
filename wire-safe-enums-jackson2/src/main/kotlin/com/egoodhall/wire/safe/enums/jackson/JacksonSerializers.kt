@@ -44,9 +44,8 @@ internal class WireSafeEnumKeySerializer<T : Enum<T>> :
 
     value.consume(
       known = {
-        (serializers.findKeySerializer(it::class.java, property)
-            ?: throw IllegalStateException("Unable to find serializer for type ${it::class.java}"))
-          .serialize(value.unwrap(), gen, serializers)
+        val serializer = serializers.findKeySerializer(it::class.java, property)!!
+        serializer.serialize(value.unwrap(), gen, serializers)
       },
       unknown = { gen.writeFieldName(it) },
     )

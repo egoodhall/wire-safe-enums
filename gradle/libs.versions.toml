@@ -3,24 +3,28 @@
 
 [versions]
 assertj = "3.24.2"
-jackson = "2.16.1"
+jackson2 = "2.16.1"
+jackson3 = "3.0.0"
 moshi = "1.15.2"
 kotlin = "2.2.0"
 kotlinx-serialization = "1.9.0"
-spotless = "7.2.1"
+spotless = "8.0.0"
 
 [libraries]
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
-jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson2" }
+jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson2" }
+jackson2-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson2" }
+jackson3-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson3" }
+jackson3-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin", version.ref = "jackson3" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 moshi = { module = "com.squareup.moshi:moshi" , version.ref = "moshi" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin" , version.ref = "moshi" }
 
 [bundles]
-jackson = ["jackson-annotations", "jackson-databind", "jackson-module-kotlin"]
+jackson2 = ["jackson-annotations", "jackson2-databind", "jackson2-module-kotlin"]
+jackson3 = ["jackson-annotations", "jackson3-databind", "jackson3-module-kotlin"]
 moshi = ["moshi", "moshi-kotlin"]
 kotlinx = ["kotlinx-serialization-json"]
 

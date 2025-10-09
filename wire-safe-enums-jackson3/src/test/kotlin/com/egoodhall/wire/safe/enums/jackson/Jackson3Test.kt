@@ -3,22 +3,20 @@ package com.egoodhall.wire.safe.enums.jackson
 import com.egoodhall.wire.safe.enums.WireSafeEnum
 import com.egoodhall.wire.safe.enums.assertj.WireSafeEnumAssert
 import com.egoodhall.wire.safe.enums.wireSafe
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.assertj.core.api.InstanceOfAssertFactories
 import org.assertj.core.api.ObjectAssert
 import org.assertj.core.api.StringAssert
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.kotlinModule
 
-class JacksonTest {
+class Jackson3Test {
   companion object {
-    val OBJECT_MAPPER =
-      ObjectMapper().apply {
-        registerKotlinModule()
-        registerModule(WireSafeEnumModule())
-      }
+    val OBJECT_MAPPER: ObjectMapper =
+      JsonMapper.builder().addModule(kotlinModule()).addModule(WireSafeEnumModule()).build()
     val KNOWN_VALUE: WireSafeEnum<TestEnum> = TestEnum.A.wireSafe()
     val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.of("B")
   }

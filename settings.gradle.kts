@@ -7,7 +7,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+  id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 
@@ -15,6 +15,7 @@ plugins {
 rootProject.name = "wire-safe-enums-parent"
 include(":wire-safe-enums")
 include("wire-safe-enums-assertj")
-include("wire-safe-enums-jackson")
+include("wire-safe-enums-jackson2")
+include("wire-safe-enums-jackson3")
 include("wire-safe-enums-kotlinx")
 include("wire-safe-enums-moshi")
