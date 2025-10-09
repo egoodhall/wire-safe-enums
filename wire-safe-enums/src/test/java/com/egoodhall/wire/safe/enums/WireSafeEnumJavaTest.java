@@ -47,10 +47,10 @@ public class WireSafeEnumJavaTest {
         assertThat(actual).isTrue();
     }
 
-  @Test
-  void itConvertsToOptional() {
-      Optional<TestEnum> actual = WireSafeEnum.of(TestEnum.A).asOptional();
+    @Test
+    void itConvertsToOptional() {
+        Optional<TestEnum> actual = WireSafeEnum.of(TestEnum.A).asOptional();
 
-      assertThat(actual).isPresent();
-  }
+        assertThat(actual).isPresent();
+    }
 }
