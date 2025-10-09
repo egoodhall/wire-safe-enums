@@ -3,6 +3,7 @@ package com.egoodhall.wire.safe.enums;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
 
@@ -45,4 +46,11 @@ public class WireSafeEnumJavaTest {
 
         assertThat(actual).isTrue();
     }
+
+  @Test
+  void itConvertsToOptional() {
+      Optional<TestEnum> actual = WireSafeEnum.of(TestEnum.A).asOptional();
+
+      assertThat(actual).isPresent();
+  }
 }

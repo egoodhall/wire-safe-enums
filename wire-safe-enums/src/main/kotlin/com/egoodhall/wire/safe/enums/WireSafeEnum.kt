@@ -1,5 +1,6 @@
 package com.egoodhall.wire.safe.enums
 
+import java.util.Optional
 import kotlin.reflect.KClass
 
 sealed class WireSafeEnum<T : Enum<T>> : Comparable<WireSafeEnum<T>> {
@@ -25,6 +26,8 @@ sealed class WireSafeEnum<T : Enum<T>> : Comparable<WireSafeEnum<T>> {
   fun isKnown(): Boolean = match(known = { true }, unknown = { false })
 
   fun unwrap(): T? = match(known = { it }, unknown = { null })
+
+  fun asOptional(): Optional<T> = Optional.ofNullable(unwrap())
 
   fun consume(known: (T) -> Unit, unknown: (String) -> Unit) = match(known, unknown)
 }
