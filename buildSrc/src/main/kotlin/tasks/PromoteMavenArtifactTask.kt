@@ -22,9 +22,9 @@ open class PromoteMavenArtifactTask : DefaultTask() {
         .header("Authorization", "Bearer $token")
         .build()
 
-      val response = client.send(request, HttpResponse.BodyHandlers.ofInputStream())
-      if (response.statusCode() !in 200..299) {
-        throw IllegalStateException("Unable to promote staged maven artifact(s): ${response.statusCode()}")
+      val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+      require(response.statusCode() in 200..299) {
+        "Unable to promote staged maven artifact(s): [${response.statusCode()}] ${response.body()}"
       }
     }
   }
