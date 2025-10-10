@@ -10,6 +10,7 @@ import java.util.Base64
 open class PromoteMavenArtifactTask : DefaultTask() {
   init {
     doFirst("Promote staged artifacts") {
+      val namespace = System.getenv("OSSRH_NAMESPACE")?.takeIf(String::isNotBlank)!!
       val username = System.getenv("OSSRH_USERNAME")?.takeIf(String::isNotBlank)!!
       val password = System.getenv("OSSRH_PASSWORD")?.takeIf(String::isNotBlank)!!
       val token = encoder.encodeToString("$username:$password".toByteArray())
@@ -17,7 +18,7 @@ open class PromoteMavenArtifactTask : DefaultTask() {
       val request = HttpRequest
         .newBuilder()
         .POST(HttpRequest.BodyPublishers.noBody())
-        .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/com.egoodhall.tools"))
+        .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/$namespace"))
         .header("Authorization", "Bearer $token")
         .build()
 

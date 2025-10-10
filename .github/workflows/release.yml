@@ -61,6 +61,7 @@ jobs:
       env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        OSSRH_NAMESPACE: ${{ secrets.OSSRH_NAMESPACE }}
     -
       name: Publish Artifacts to GitHub Packages
       run: ./gradlew publishAllPublicationsToGithubPackagesRepository -Pversion=${{ github.ref_name }}
