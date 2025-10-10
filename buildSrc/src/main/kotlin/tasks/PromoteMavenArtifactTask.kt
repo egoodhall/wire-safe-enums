@@ -1,5 +1,6 @@
 package buildsrc.convention.tasks
 
+import buildsrc.convention.util.envVar
 import org.gradle.api.DefaultTask
 import java.net.URI
 import java.net.http.HttpClient
@@ -10,9 +11,9 @@ import java.util.Base64
 open class PromoteMavenArtifactTask : DefaultTask() {
   init {
     doFirst("Promote staged artifacts") {
-      val namespace = System.getenv("OSSRH_NAMESPACE")?.takeIf(String::isNotBlank)!!
-      val username = System.getenv("OSSRH_USERNAME")?.takeIf(String::isNotBlank)!!
-      val password = System.getenv("OSSRH_PASSWORD")?.takeIf(String::isNotBlank)!!
+      val namespace = envVar("OSSRH_NAMESPACE")
+      val username = envVar("OSSRH_USERNAME")
+      val password = envVar("OSSRH_PASSWORD")
       val token = encoder.encodeToString("$username:$password".toByteArray())
 
       val request = HttpRequest

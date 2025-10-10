@@ -1,6 +1,7 @@
 package buildsrc.convention
 
 import buildsrc.convention.tasks.PromoteMavenArtifactTask
+import buildsrc.convention.util.envVar
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
@@ -156,13 +157,11 @@ publishing {
 
 onlyInCI {
   signing {
-    val signingKey = System.getenv("SIGNING_KEY")
-    val signingPassword = System.getenv("SIGNING_PASSWORD")
+    val signingKey = envVar("SIGNING_KEY")
+    val signingPassword = envVar("SIGNING_PASSWORD")
 
-    if (signingKey != null && signingPassword != null) {
-      useInMemoryPgpKeys(signingKey, signingPassword)
-      sign(publishing.publications["maven"])
-    }
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications["maven"])
   }
 }
 
