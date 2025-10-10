@@ -17,9 +17,10 @@ jobs:
       name: Validate release version
       shell: python
       run: | 
-        import re
-        import os
-        re.compile(r"^\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+)*$").match(os.environ["version"])
+        import os, re
+        version = os.environ["version"]
+        semver = r"^\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+)*$"
+        assert re.compile(semver).match(version)
       env:
         version: ${{ github.ref_name }}
     -
@@ -36,7 +37,19 @@ jobs:
       name: Set up Gradle
       uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2
     -
-      name: Publish
-      run: ./gradlew publish -Pversion=${{ github.ref_name }}
+      name: Check formatting
+      run: ./gradlew spotlessCheck
+    -
+      name: Build and Test
+      run: ./gradlew build test
+    -
+      name: Publish Artifacts to GitHub Packages
+      run: ./gradlew publishAllPublicationsToGithubPackagesRepository -Pversion=${{ github.ref_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    -
+      name: Publish Artifacts to Maven Central
+      run: ./gradlew publishAllPublicationsToOssrhStagingRepository -Pversion=${{ github.ref_name }}
+      env:
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

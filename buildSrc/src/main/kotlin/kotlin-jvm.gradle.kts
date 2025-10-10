@@ -131,6 +131,17 @@ publishing {
     }
 
     onlyInCI {
+      // Maven central
+      maven {
+        name = "OssrhStaging"
+        url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+        credentials {
+          username = System.getenv("OSSRH_USERNAME")
+          password = System.getenv("OSSRH_PASSWORD")
+        }
+      }
+
+      // GitHub Packages
       maven {
         name = "GithubPackages"
         url = uri("https://maven.pkg.github.com/egoodhall/wire-safe-enums")
@@ -159,14 +170,16 @@ onlyInCI {
 // CI configuration gating //
 /////////////////////////////
 
+fun isInCI(): Boolean = System.getenv("CI")?.takeIf(String::isNotBlank) != null
+
 fun onlyInCI(block: () -> Unit) {
-  if (System.getenv("CI")?.takeIf(String::isNotBlank) != null) {
+  if (isInCI()) {
     block()
   }
 }
 
 fun notInCI(block: () -> Unit) {
-  if (System.getenv("CI")?.takeIf(String::isNotBlank) != null) {
+  if (!isInCI()) {
     block()
   }
 }
