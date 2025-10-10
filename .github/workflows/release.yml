@@ -5,6 +5,10 @@ on:
     types:
     - published
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -15,7 +19,7 @@ jobs:
       run: | 
         import re
         import os
-        re.compile("^\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+)*$").match(os.environ["version"])
+        re.compile(r"^\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+)*$").match(os.environ["version"])
       env:
         version: ${{ github.ref_name }}
     -
