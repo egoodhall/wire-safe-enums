@@ -13,6 +13,14 @@ dependencies {
 }
 
 spotless {
+  kotlin {
+    ktfmt().googleStyle().configure {
+      it.setMaxWidth(128)
+      it.setBlockIndent(2)
+      it.setContinuationIndent(2)
+      it.setRemoveUnusedImports(true)
+    }
+  }
   kotlinGradle {
     ktfmt().googleStyle().configure {
       it.setMaxWidth(128)
