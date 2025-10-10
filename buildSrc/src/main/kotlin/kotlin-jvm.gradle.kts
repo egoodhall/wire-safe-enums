@@ -1,5 +1,6 @@
 package buildsrc.convention
 
+import buildsrc.convention.tasks.PromoteMavenArtifactTask
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
@@ -124,7 +125,6 @@ publishing {
     }
   }
 
-
   repositories {
     notInCI {
       mavenLocal()
@@ -133,8 +133,8 @@ publishing {
     onlyInCI {
       // Maven central
       maven {
-        name = "OssrhStaging"
-        url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+        name = "CentralStaging"
+        url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2")
         credentials {
           username = System.getenv("OSSRH_USERNAME")
           password = System.getenv("OSSRH_PASSWORD")
@@ -163,6 +163,14 @@ onlyInCI {
       useInMemoryPgpKeys(signingKey, signingPassword)
       sign(publishing.publications["maven"])
     }
+  }
+}
+
+onlyInCI {
+  tasks.register<PromoteMavenArtifactTask>("promoteStagedMavenArtifactsToCentralRepository").configure {
+    group = "Publishing"
+    description = "Promote staged Maven artifacts to OSSRH"
+    dependsOn(tasks.named("publishAllPublicationsToCentralStagingRepository"))
   }
 }
 
