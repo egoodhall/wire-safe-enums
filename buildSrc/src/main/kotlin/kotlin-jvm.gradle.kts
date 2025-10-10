@@ -135,7 +135,7 @@ publishing {
 
     onlyInCI {
       maven {
-        name = "github-packages"
+        name = "GithubPackages"
         url = uri("https://maven.pkg.github.com/egoodhall/wire-safe-enums")
         credentials {
           username = System.getenv("GITHUB_ACTOR")
