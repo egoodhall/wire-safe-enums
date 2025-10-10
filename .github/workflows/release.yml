@@ -43,13 +43,13 @@ jobs:
       name: Build and Test
       run: ./gradlew build test
     -
-      name: Publish Artifacts to GitHub Packages
-      run: ./gradlew publishAllPublicationsToGithubPackagesRepository -Pversion=${{ github.ref_name }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    -
       name: Publish Artifacts to Maven Central
       run: ./gradlew publishAllPublicationsToOssrhStagingRepository -Pversion=${{ github.ref_name }}
       env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+    -
+      name: Publish Artifacts to GitHub Packages
+      run: ./gradlew publishAllPublicationsToGithubPackagesRepository -Pversion=${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
