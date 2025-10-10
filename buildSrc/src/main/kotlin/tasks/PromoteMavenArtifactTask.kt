@@ -17,7 +17,7 @@ open class PromoteMavenArtifactTask : DefaultTask() {
       val request = HttpRequest
         .newBuilder()
         .POST(HttpRequest.BodyPublishers.noBody())
-        .uri(URI.create("https://central.sonatype.com/manual/upload/defaultRepository/com.egoodhall.tools"))
+        .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/com.egoodhall.tools"))
         .header("Authorization", "Bearer $token")
         .build()
 
