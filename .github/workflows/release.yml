@@ -46,22 +46,18 @@ jobs:
       name: Publish Artifacts to Maven Central
       run: >-
         ./gradlew
+        spotlessCheck
+        build
+        test
         publishAllPublicationsToCentralStagingRepository
-        -Pversion=${{ github.ref_name }}
-      env:
-        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-    -
-      name: Promote Maven Central Artifacts from Staging
-      shell: bash
-      run: >-
-        ./gradlew
         promoteStagedMavenArtifactsToCentralRepository
         -Pversion=${{ github.ref_name }}
       env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         OSSRH_NAMESPACE: ${{ secrets.OSSRH_NAMESPACE }}
+        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
     -
       name: Publish Artifacts to GitHub Packages
       run: ./gradlew publishAllPublicationsToGithubPackagesRepository -Pversion=${{ github.ref_name }}
