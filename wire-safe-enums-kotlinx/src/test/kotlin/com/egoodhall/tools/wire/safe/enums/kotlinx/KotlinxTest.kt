@@ -18,7 +18,7 @@ class KotlinxTest {
   companion object {
     val JSON = Json { serializersModule = WireSafeEnumModule }
     val KNOWN_VALUE: WireSafeEnum<TestEnum> = TestEnum.A.wireSafe()
-    val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.Companion.of("B")
+    val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.of("B")
   }
 
   enum class TestEnum {

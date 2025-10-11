@@ -25,9 +25,9 @@ internal class WireSafeEnumSerializer<T : Enum<T>>(private val delegate: KSerial
   override fun deserialize(decoder: Decoder): WireSafeEnum<T> {
     val tree = decoder.decodeSerializableValue(JsonElement.serializer())
     return try {
-      WireSafeEnum.Companion.of(Json.decodeFromJsonElement(delegate, tree))
+      WireSafeEnum.of(Json.decodeFromJsonElement(delegate, tree))
     } catch (_: Exception) {
-      WireSafeEnum.Companion.of(Json.decodeFromJsonElement(String.serializer(), tree))
+      WireSafeEnum.of(Json.decodeFromJsonElement(String.serializer(), tree))
     }
   }
 }
