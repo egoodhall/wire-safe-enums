@@ -141,8 +141,8 @@ publishing {
         name = "CentralStaging"
         url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2")
         credentials {
-          username = System.getenv("OSSRH_USERNAME")
-          password = System.getenv("OSSRH_PASSWORD")
+          username = envVar("OSSRH_USERNAME")
+          password = envVar("OSSRH_PASSWORD")
         }
       }
 
@@ -151,8 +151,8 @@ publishing {
         name = "GithubPackages"
         url = uri("https://maven.pkg.github.com/egoodhall/wire-safe-enums")
         credentials {
-          username = System.getenv("GITHUB_ACTOR")
-          password = System.getenv("GITHUB_TOKEN")
+          username = envVar("GITHUB_ACTOR")
+          password = envVar("GITHUB_TOKEN")
         }
       }
     }
@@ -160,10 +160,8 @@ publishing {
 }
 
 signing {
-  onlyWhenEnvVarsSet("SIGNING_KEY", "SIGNING_PASSWORD") {
-    val signingKey = maybeEnvVar("SIGNING_KEY")
-    val signingPassword = maybeEnvVar("SIGNING_PASSWORD")
-    useInMemoryPgpKeys(signingKey, signingPassword)
+  onlyWhenEnvVarsSet("GPG_KEY", "GPG_KEY_PASSPHRASE") {
+    useInMemoryPgpKeys(envVar("GPG_KEY"), envVar("GPG_KEY_PASSPHRASE"))
   }
 
   sign(publishing.publications["maven"])
