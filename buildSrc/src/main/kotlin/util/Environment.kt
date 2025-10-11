@@ -9,7 +9,7 @@ fun maybeEnvVar(name: String): String? {
 }
 
 fun onlyInCI(vararg otherRequiredVars: String, block: () -> Unit) {
-  if (maybeEnvVar("CI") == null || !otherRequiredVars.map { maybeEnvVar(it) }.all { it != null }) {
+  if (maybeEnvVar("CI") != null && otherRequiredVars.map { maybeEnvVar(it) }.all { it != null }) {
     block()
   }
 }

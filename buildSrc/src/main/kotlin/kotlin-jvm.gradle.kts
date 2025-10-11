@@ -131,7 +131,7 @@ publishing {
   repositories {
     mavenLocal()
 
-    onlyInCI("RELEASE") {
+    onlyInCI("OSSRH_USERNAME", "OSSRH_PASSWORD") {
       maven {
         name = "CentralStaging"
         url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2")
