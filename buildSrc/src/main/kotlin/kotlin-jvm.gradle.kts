@@ -2,6 +2,7 @@ package buildsrc.convention
 
 import buildsrc.convention.tasks.PromoteMavenArtifactTask
 import buildsrc.convention.util.envVar
+import buildsrc.convention.util.maybeEnvVar
 import buildsrc.convention.util.notInCI
 import buildsrc.convention.util.onlyInCI
 import buildsrc.convention.util.onlyWhenEnvVarsSet
@@ -159,13 +160,13 @@ publishing {
 }
 
 signing {
-  sign(publishing.publications["maven"])
-
   onlyWhenEnvVarsSet("SIGNING_KEY", "SIGNING_PASSWORD") {
-    val signingKey = envVar("SIGNING_KEY")
-    val signingPassword = envVar("SIGNING_PASSWORD")
+    val signingKey = maybeEnvVar("SIGNING_KEY")
+    val signingPassword = maybeEnvVar("SIGNING_PASSWORD")
     useInMemoryPgpKeys(signingKey, signingPassword)
   }
+
+  sign(publishing.publications["maven"])
 }
 
 onlyInCI {

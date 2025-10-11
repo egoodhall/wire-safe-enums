@@ -16,7 +16,7 @@ fun isInCI(): Boolean = try {
 }
 
 fun onlyWhenEnvVarsSet(vararg vars: String, block: () -> Unit) {
-  if (vars.all { maybeEnvVar(it) != null}) {
+  if (vars.map { System.getenv(it) }.all { it?.isNotBlank() ?: false }) {
     block()
   }
 }
