@@ -5,10 +5,6 @@ on:
     types:
     - published
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -48,7 +44,6 @@ jobs:
         signMavenPublication
         publishAllPublicationsToCentralStagingRepository
         promoteStagedMavenArtifactsToCentralRepository
-        publishAllPublicationsToGithubPackagesRepository
         -Pversion=${{ github.ref_name }}
       env:
         GPG_KEY: ${{ secrets.GPG_KEY }}
@@ -56,4 +51,3 @@ jobs:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         OSSRH_NAMESPACE: ${{ secrets.OSSRH_NAMESPACE }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

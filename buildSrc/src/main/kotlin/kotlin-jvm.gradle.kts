@@ -145,16 +145,6 @@ publishing {
           password = envVar("OSSRH_PASSWORD")
         }
       }
-
-      // GitHub Packages
-      maven {
-        name = "GithubPackages"
-        url = uri("https://maven.pkg.github.com/egoodhall/wire-safe-enums")
-        credentials {
-          username = envVar("GITHUB_ACTOR")
-          password = envVar("GITHUB_TOKEN")
-        }
-      }
     }
   }
 }
