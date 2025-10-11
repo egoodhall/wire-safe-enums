@@ -27,7 +27,7 @@ class WireSafeEnumModule : SimpleModule("wire-safe-enum") {
 
 internal interface WireSafeEnumJacksonUtil {
   fun <T> whenWireSafeEnum(type: JavaType, supplier: () -> T): T? =
-    if (WireSafeEnum.Companion.isWireSafeEnum(type.rawClass)) {
+    if (WireSafeEnum.isWireSafeEnum(type.rawClass)) {
       supplier()
     } else {
       null
@@ -67,7 +67,7 @@ internal class WireSafeEnumDeserializers : Deserializers.Base(), WireSafeEnumJac
   }
 
   override fun hasDeserializerFor(config: DeserializationConfig?, valueType: Class<*>): Boolean {
-    return WireSafeEnum.Companion.isWireSafeEnum(valueType)
+    return WireSafeEnum.isWireSafeEnum(valueType)
   }
 }
 

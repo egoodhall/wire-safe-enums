@@ -26,9 +26,9 @@ internal class WireSafeEnumDeserializer<T : Enum<T>> : ValueDeserializer<WireSaf
       ctxt.findRootValueDeserializer(enumType)
         ?: throw IllegalStateException("Unable to find deserializer for ${enumClass.simpleName}")
     return try {
-      WireSafeEnum.Companion.of(delegate.deserialize(parser, ctxt) as T)
+      WireSafeEnum.of(delegate.deserialize(parser, ctxt) as T)
     } catch (_: Exception) {
-      WireSafeEnum.Companion.of(parser.string!!)
+      WireSafeEnum.of(parser.string!!)
     }
   }
 

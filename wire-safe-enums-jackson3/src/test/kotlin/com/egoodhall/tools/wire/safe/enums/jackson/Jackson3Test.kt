@@ -18,7 +18,7 @@ class Jackson3Test {
     val OBJECT_MAPPER: ObjectMapper =
       JsonMapper.builder().addModule(kotlinModule()).addModule(WireSafeEnumModule()).build()
     val KNOWN_VALUE: WireSafeEnum<TestEnum> = TestEnum.A.wireSafe()
-    val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.Companion.of("B")
+    val UNKNOWN_VALUE: WireSafeEnum<TestEnum> = WireSafeEnum.of("B")
   }
 
   enum class TestEnum {
@@ -32,14 +32,14 @@ class Jackson3Test {
     @Test
     fun `it deserializes from JSON`() {
       assertThatDeserializedJson<WireSafeEnum<TestEnum>>("\"A\"")
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(KNOWN_VALUE)
     }
 
     @Test
     fun `it handles unknown JSON values`() {
       assertThatDeserializedJson<WireSafeEnum<TestEnum>>("\"B\"")
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(UNKNOWN_VALUE)
     }
 
@@ -47,7 +47,7 @@ class Jackson3Test {
     fun `it deserializes known value from wrapped JSON`() {
       assertThatDeserializedJson<TestWrapper>("{ \"field\": \"A\" }")
         .extracting { it.field }
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(KNOWN_VALUE)
     }
 
@@ -55,7 +55,7 @@ class Jackson3Test {
     fun `it deserializes unknown value from wrapped JSON`() {
       assertThatDeserializedJson<TestWrapper>("{ \"field\": \"B\" }")
         .extracting { it.field }
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(UNKNOWN_VALUE)
     }
 
@@ -78,7 +78,7 @@ class Jackson3Test {
       assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>("{\"field\":\"A\"}")
         .asInstanceOf(InstanceOfAssertFactories.MAP)
         .extractingByKey("field")
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(KNOWN_VALUE)
     }
 
@@ -87,7 +87,7 @@ class Jackson3Test {
       assertThatDeserializedJson<Map<String, WireSafeEnum<TestEnum>>>("{\"field\":\"B\"}")
         .asInstanceOf(InstanceOfAssertFactories.MAP)
         .extractingByKey("field")
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(UNKNOWN_VALUE)
     }
 
@@ -96,7 +96,7 @@ class Jackson3Test {
       assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>("[\"A\"]")
         .asInstanceOf(InstanceOfAssertFactories.LIST)
         .first()
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(KNOWN_VALUE)
     }
 
@@ -105,7 +105,7 @@ class Jackson3Test {
       assertThatDeserializedJson<List<WireSafeEnum<TestEnum>>>("[\"B\"]")
         .asInstanceOf(InstanceOfAssertFactories.LIST)
         .first()
-        .asInstanceOf(WireSafeEnumAssert.Companion.factory<TestEnum>())
+        .asInstanceOf(WireSafeEnumAssert.factory<TestEnum>())
         .isEqualTo(UNKNOWN_VALUE)
     }
 

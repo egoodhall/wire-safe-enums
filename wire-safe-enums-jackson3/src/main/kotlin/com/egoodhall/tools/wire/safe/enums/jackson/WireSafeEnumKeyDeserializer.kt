@@ -15,9 +15,9 @@ internal class WireSafeEnumKeyDeserializer<T : Enum<T>> :
       return null
     }
     return try {
-      @Suppress("UNCHECKED_CAST") WireSafeEnum.Companion.of(delegate.deserializeKey(key, ctxt) as T)
+      @Suppress("UNCHECKED_CAST") WireSafeEnum.of(delegate.deserializeKey(key, ctxt) as T)
     } catch (_: Exception) {
-      WireSafeEnum.Companion.of(key)
+      WireSafeEnum.of(key)
     }
   }
 
