@@ -2,10 +2,10 @@ package buildsrc.convention
 
 import buildsrc.convention.tasks.PromoteMavenArtifactTask
 import buildsrc.convention.util.envVar
-import buildsrc.convention.util.maybeEnvVar
 import buildsrc.convention.util.notInCI
 import buildsrc.convention.util.onlyInCI
 import buildsrc.convention.util.onlyWhenEnvVarsSet
+import buildsrc.convention.util.rootProject
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
@@ -158,12 +158,15 @@ signing {
 }
 
 onlyInCI {
-  tasks.register<PromoteMavenArtifactTask>("promoteStagedMavenArtifactsToCentralRepository").configure {
-    group = "Publishing"
-    description = "Promote staged Maven artifacts to OSSRH"
-    dependsOn(
-      tasks.withType<Sign>(),
-      tasks.withType<PublishToMavenRepository>()
-    )
-  }
+  project.rootProject()
+    .takeIf { it.tasks.withType<PromoteMavenArtifactTask>().isEmpty() }
+    ?.tasks?.register<PromoteMavenArtifactTask>("promoteStagedMavenArtifactsToCentralRepository")
+    ?.configure {
+      group = "Publishing"
+      description = "Promote staged Maven artifacts to OSSRH"
+      dependsOn(
+        tasks.withType<Sign>(),
+        tasks.withType<PublishToMavenRepository>()
+      )
+    }
 }

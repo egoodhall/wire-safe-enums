@@ -7,10 +7,19 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.Base64
+import java.util.concurrent.atomic.AtomicBoolean
 
 open class PromoteMavenArtifactTask : DefaultTask() {
+  companion object {
+    private val completed = AtomicBoolean(false)
+  }
+
   init {
     doFirst("Promote staged artifacts") {
+      if (completed.getAndSet(true)) {
+        return@doFirst
+      }
+
       val namespace = envVar("OSSRH_NAMESPACE")
       val username = envVar("OSSRH_USERNAME")
       val password = envVar("OSSRH_PASSWORD")
