@@ -46,6 +46,7 @@ jobs:
         promoteStagedMavenArtifactsToCentralRepository
         -Pversion=${{ github.ref_name }}
       env:
+        RELEASE: true
         GPG_KEY: ${{ secrets.GPG_KEY }}
         GPG_KEY_PASSPHRASE: ${{ secrets.GPG_KEY_PASSPHRASE }}
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
