@@ -2,9 +2,7 @@ package buildsrc.convention
 
 import buildsrc.convention.tasks.PromoteMavenArtifactTask
 import buildsrc.convention.util.envVar
-import buildsrc.convention.util.notInCI
 import buildsrc.convention.util.onlyInCI
-import buildsrc.convention.util.onlyWhenEnvVarsSet
 import buildsrc.convention.util.rootProject
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -105,7 +103,7 @@ publishing {
       pom {
         name = project.name
         description = "Wrapper class for enums that supports deserialization of unknown enum values"
-        url = "https://github.com/egoodhall/ktools"
+        url = "https://github.com/egoodhall/wire-safe-enums"
 
         licenses {
           license {
@@ -131,12 +129,9 @@ publishing {
   }
 
   repositories {
-    notInCI {
-      mavenLocal()
-    }
+    mavenLocal()
 
-    onlyInCI {
-      // Maven central
+    onlyInCI("RELEASE") {
       maven {
         name = "CentralStaging"
         url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2")
@@ -150,7 +145,7 @@ publishing {
 }
 
 signing {
-  onlyWhenEnvVarsSet("GPG_KEY", "GPG_KEY_PASSPHRASE") {
+  onlyInCI("GPG_KEY", "GPG_KEY_PASSPHRASE") {
     useInMemoryPgpKeys(envVar("GPG_KEY"), envVar("GPG_KEY_PASSPHRASE"))
   }
 

@@ -8,19 +8,8 @@ fun maybeEnvVar(name: String): String? {
   return System.getenv(name)?.takeIf(String::isNotBlank)
 }
 
-fun isInCI(): Boolean = try {
-  envVar("CI")
-  true
-} catch (_: Throwable) {
-  false
-}
-
-fun onlyWhenEnvVarsSet(vararg vars: String, block: () -> Unit) {
-  if (vars.map { System.getenv(it) }.all { it?.isNotBlank() ?: false }) {
+fun onlyInCI(vararg otherRequiredVars: String, block: () -> Unit) {
+  if (maybeEnvVar("CI") == null || !otherRequiredVars.map { maybeEnvVar(it) }.all { it != null }) {
     block()
   }
 }
-
-fun onlyInCI(block: () -> Unit) = if (isInCI()) block() else Unit
-
-fun notInCI(block: () -> Unit) = if (!isInCI()) block() else Unit
