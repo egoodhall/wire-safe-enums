@@ -43,12 +43,19 @@ jobs:
       name: Build and Test
       run: ./gradlew build test
     -
+      name: Generate Maven Central Publishing Artifacts
+      run: >-
+        ./gradlew
+        generatePomFileForMavenPublication
+        generateMetadataFileForMavenPublication
+        signMavenPublication
+      env:
+        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+    -
       name: Publish Artifacts to Maven Central
       run: >-
         ./gradlew
-        spotlessCheck
-        build
-        test
         publishAllPublicationsToCentralStagingRepository
         promoteStagedMavenArtifactsToCentralRepository
         -Pversion=${{ github.ref_name }}
@@ -56,8 +63,6 @@ jobs:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         OSSRH_NAMESPACE: ${{ secrets.OSSRH_NAMESPACE }}
-        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
     -
       name: Publish Artifacts to GitHub Packages
       run: ./gradlew publishAllPublicationsToGithubPackagesRepository -Pversion=${{ github.ref_name }}

@@ -2,6 +2,9 @@ package buildsrc.convention
 
 import buildsrc.convention.tasks.PromoteMavenArtifactTask
 import buildsrc.convention.util.envVar
+import buildsrc.convention.util.notInCI
+import buildsrc.convention.util.onlyInCI
+import buildsrc.convention.util.onlyWhenEnvVarsSet
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
@@ -155,13 +158,13 @@ publishing {
   }
 }
 
-onlyInCI {
-  signing {
+signing {
+  sign(publishing.publications["maven"])
+
+  onlyWhenEnvVarsSet("SIGNING_KEY", "SIGNING_PASSWORD") {
     val signingKey = envVar("SIGNING_KEY")
     val signingPassword = envVar("SIGNING_PASSWORD")
-
     useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications["maven"])
   }
 }
 
@@ -169,24 +172,9 @@ onlyInCI {
   tasks.register<PromoteMavenArtifactTask>("promoteStagedMavenArtifactsToCentralRepository").configure {
     group = "Publishing"
     description = "Promote staged Maven artifacts to OSSRH"
-    dependsOn(tasks.named("publishAllPublicationsToCentralStagingRepository"))
-  }
-}
-
-/////////////////////////////
-// CI configuration gating //
-/////////////////////////////
-
-fun isInCI(): Boolean = System.getenv("CI")?.takeIf(String::isNotBlank) != null
-
-fun onlyInCI(block: () -> Unit) {
-  if (isInCI()) {
-    block()
-  }
-}
-
-fun notInCI(block: () -> Unit) {
-  if (!isInCI()) {
-    block()
+    dependsOn(
+      tasks.withType<Sign>(),
+      tasks.withType<PublishToMavenRepository>()
+    )
   }
 }
