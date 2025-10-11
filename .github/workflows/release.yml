@@ -37,34 +37,23 @@ jobs:
       name: Set up Gradle
       uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2
     -
-      name: Check formatting
-      run: ./gradlew spotlessCheck
-    -
-      name: Build and Test
-      run: ./gradlew build test
-    -
-      name: Generate Maven Central Publishing Artifacts
+      name: Build and Publish
       run: >-
         ./gradlew
+        spotlessCheck
+        build
+        test
         generatePomFileForMavenPublication
         generateMetadataFileForMavenPublication
         signMavenPublication
+        publishAllPublicationsToCentralStagingRepository
+        promoteStagedMavenArtifactsToCentralRepository
+        publishAllPublicationsToGithubPackagesRepository
+        -Pversion=${{ github.ref_name }}
       env:
         SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-    -
-      name: Publish Artifacts to Maven Central
-      run: >-
-        ./gradlew
-        publishAllPublicationsToCentralStagingRepository
-        promoteStagedMavenArtifactsToCentralRepository
-        -Pversion=${{ github.ref_name }}
-      env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         OSSRH_NAMESPACE: ${{ secrets.OSSRH_NAMESPACE }}
-    -
-      name: Publish Artifacts to GitHub Packages
-      run: ./gradlew publishAllPublicationsToGithubPackagesRepository -Pversion=${{ github.ref_name }}
-      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
