@@ -33,6 +33,7 @@ Suppose we run a custom tee shirt printing business. In this example, we have tw
 
 Let's say the sizes we support are represented as an enum in a shared library, and that we want
 to add a new `XL` shirt size:
+
 ```kotlin
 enum class TeeShirtSize {
   SM,
@@ -41,10 +42,11 @@ enum class TeeShirtSize {
   XL, // New size!
 }
 ```
+
 Before it's safe to use the new value, **both** `inventory-service` and `print-service` would
 need to be deployed. If either service has not been deployed with the updated enum, its JSON
 parsing library will fail to parse `"XL"`, because it's not one of the known `TeeShirtSize`
-values in the JVM. 
+values in the JVM.
 
 ```mermaid
 flowchart LR
@@ -54,7 +56,7 @@ flowchart LR
     InventoryService["`inventory-service
     SM|MD|LG
     `"]
-    
+
     PrintService -- XL --> InventoryService
 ```
 
@@ -80,30 +82,35 @@ constant, it will be wrapped in a `Known`, otherwise the (unquoted) JSON string 
 wrapped in an `Unknown`. Several common JSON serialization libraries are supported:
 
 <details>
-<summary><b>Jackson</b></summary>
+<summary><b>Jackson 2</b></summary>
 
 ### Installation:
+
 **Gradle:**
+
 ```kotlin
-// com.egoodhall:wire-safe-enums is exposed as `api`, so you only need this dependency
-implementation("com.egoodhall:wire-safe-enums-jackson:${VERSION}")
+// com.egoodhall.tools:wire-safe-enums is exposed as `api`, so you only need this dependency
+implementation("com.egoodhall.tools:wire-safe-enums-jackson2:${VERSION}")
 ```
+
 **Maven:**
+
 ```xml
 <dependency>
-  <groupId>com.egoodhall</groupId>
-  <artifactId>wire-safe-enums-jackson</artifactId>
+  <groupId>com.egoodhall.tools</groupId>
+  <artifactId>wire-safe-enums-jackson2</artifactId>
   <version>${VERSION}</version>
 </dependency>
 ```
 
 ### Usage
+
 Jackson support for `WireSafeEnum` is provided by the `WireSafeEnumModule`. Registering it with the
 ObjectMapper will provide `JsonSerializers`/`JsonDeserializer`s that support the generics needed by
 `WireSafeEnum`.
 
 ```kotlin
-// Register the WireSafeEnumModule with the ObjectMapper 
+// Register the WireSafeEnumModule with the ObjectMapper
 val mapper = ObjectMapper().apply {
   registerKotlinModule()
   registerModule(WireSafeEnumModule())
@@ -121,24 +128,75 @@ val unknownJson = mapper.writeValueAsString(unknown) // "XL"
 </details>
 
 <details>
+<summary><b>Jackson 3</b></summary>
+
+### Installation:
+
+**Gradle:**
+
+```kotlin
+// com.egoodhall.tools:wire-safe-enums is exposed as `api`, so you only need this dependency
+implementation("com.egoodhall.tools:wire-safe-enums-jackson3:${VERSION}")
+```
+
+**Maven:**
+
+```xml
+<dependency>
+  <groupId>com.egoodhall.tools</groupId>
+  <artifactId>wire-safe-enums-jackson3</artifactId>
+  <version>${VERSION}</version>
+</dependency>
+```
+
+### Usage
+
+Jackson support for `WireSafeEnum` is provided by the `WireSafeEnumModule`. Registering it with the
+JsonMapper will provide `JsonSerializers`/`JsonDeserializer`s that support the generics needed by
+`WireSafeEnum`.
+
+```kotlin
+// Register the WireSafeEnumModule with the ObjectMapper
+val mapper = JsonMapper.builder()
+	.addModule(kotlinModule())
+	.addModule(WireSafeEnumModule())
+	.build()
+
+// Use the ObjectMapper to convert known values to/from JSON
+val known = mapper.readValue<WireSafeEnum<TeeShirtSize>>("\"MD\"") // Known(TeeShirtSize.MD)
+val knownJson = mapper.writeValueAsString(known) // "MD"
+
+// Use the ObjectMapper to convert *unknown* values to/from JSON
+val unknown = mapper.readValue<WireSafeEnum<TeeShirtSize>>("\"XL\"") // Unknown("XL")
+val unknownJson = mapper.writeValueAsString(unknown) // "XL"
+```
+
+</details>
+
+<details>
 <summary><b>kotlinx.serialization</b></summary>
 
 ### Installation:
+
 **Gradle:**
+
 ```kotlin
-// com.egoodhall:wire-safe-enums is exposed as `api`, so you only need this dependency
-implementation("com.egoodhall:wire-safe-enums-kotlinx:${VERSION}")
+// com.egoodhall.tools:wire-safe-enums is exposed as `api`, so you only need this dependency
+implementation("com.egoodhall.tools:wire-safe-enums-kotlinx:${VERSION}")
 ```
+
 **Maven:**
+
 ```xml
 <dependency>
-  <groupId>com.egoodhall</groupId>
+  <groupId>com.egoodhall.tools</groupId>
   <artifactId>wire-safe-enums-kotlinx</artifactId>
   <version>${VERSION}</version>
 </dependency>
 ```
 
 ### Usage
+
 kotlinx.serialization support for `WireSafeEnum` is provided by the `WireSafeEnumModule`. Registering
 it with the `Json` instance will provide a `WireSafeEnumSerializer` that supports the generics needed by
 `WireSafeEnum`.
@@ -162,21 +220,26 @@ val unknownJson = mapper.encodeToString(unknown) // "XL"
 <summary><b>Moshi</b></summary>
 
 ### Installation:
+
 **Gradle:**
+
 ```kotlin
-// com.egoodhall:wire-safe-enums is exposed as `api`, so you only need this dependency
-implementation("com.egoodhall:wire-safe-enums-moshi:${VERSION}")
+// com.egoodhall.tools:wire-safe-enums is exposed as `api`, so you only need this dependency
+implementation("com.egoodhall.tools:wire-safe-enums-moshi:${VERSION}")
 ```
+
 **Maven:**
+
 ```xml
 <dependency>
-  <groupId>com.egoodhall</groupId>
+  <groupId>com.egoodhall.tools</groupId>
   <artifactId>wire-safe-enums-moshi</artifactId>
   <version>${VERSION}</version>
 </dependency>
 ```
 
 ### Usage
+
 Moshi support for `WireSafeEnum` is provided by the `WireSafeEnumAdapterFactory`. Registering it
 with the `Moshi` builder will provide a `JsonAdapter` that supports the generics needed by
 `WireSafeEnum`.
@@ -188,7 +251,7 @@ val moshi = Moshi.Builder()
   .addLast(KotlinJsonAdapterFactory())
   .build()
 
-// Get an adapter for 
+// Get an adapter for
 val adapter = moshi.adapter<WireSafeEnum<TeeShirtSize>>()
 
 // Use the adapter to convert known values to/from JSON
