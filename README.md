@@ -1,8 +1,60 @@
 # Wire-safe enums
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.egoodhall.tools/wire-safe-enums)](https://search.maven.org/artifact/com.egoodhall.tools/wire-safe-enums)
+[![Java](https://img.shields.io/badge/Java-11%2B-blue)](https://adoptium.net/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.0%2B-purple)](https://kotlinlang.org/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Wrapper class for enums that supports deserialization of unknown enum values. This is
 especially useful when handling enums sent across the wire between different JVMs, where
 an enum value may not be known.
+
+## Compatibility
+
+### Java & Kotlin
+
+- **Java**: 11+
+- **Kotlin**: 2.2.0+
+- **JVM Target**: 11+
+
+### JSON Serialization Libraries
+
+| Library               | Module                     | Supported Versions | Status    |
+| --------------------- | -------------------------- | ------------------ | --------- |
+| Jackson 2             | `wire-safe-enums-jackson2` | 2.16.1+            | ✅ Stable |
+| Jackson 3             | `wire-safe-enums-jackson3` | 3.0.0+             | ✅ Stable |
+| kotlinx.serialization | `wire-safe-enums-kotlinx`  | 1.9.0+             | ✅ Stable |
+| Moshi                 | `wire-safe-enums-moshi`    | 1.15.2+            | ✅ Stable |
+
+### Platform Support
+
+- **JVM**: Full support
+- **Android**: Compatible (API level 21+)
+- **Kotlin Multiplatform**: Not currently supported (JVM-only)
+
+## Quick Start
+
+Add the core dependency to your project:
+
+**Gradle (Kotlin DSL):**
+
+```kotlin
+dependencies {
+    implementation("com.egoodhall.tools:wire-safe-enums:${VERSION}")
+}
+```
+
+**Maven:**
+
+```xml
+<dependency>
+    <groupId>com.egoodhall.tools</groupId>
+    <artifactId>wire-safe-enums</artifactId>
+    <version>${VERSION}</version>
+</dependency>
+```
+
+Then add the appropriate JSON serialization module for your preferred library (see [JSON Serialization](#json-serialization) section below).
 
 ## API
 
