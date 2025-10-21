@@ -6,7 +6,7 @@ assertj = "3.24.2"
 jackson2 = "2.16.1"
 jackson3 = "3.0.0"
 moshi = "1.15.2"
-kotlin = "2.2.0"
+kotlin = "2.2.20"
 kotlinx-serialization = "1.9.0"
 spotless = "8.0.0"
 
