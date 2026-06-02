@@ -1,19 +1,24 @@
 package com.egoodhall.tools.wire.safe.enums
 
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import java.util.Optional
-import kotlin.reflect.KClass
 
+/**
+ * An enum wrapper that allows for safe deserialization of unknown types, which may occur as JVMs
+ * are deployed with different revisions of a given library.
+ */
 sealed class WireSafeEnum<T : Enum<T>> : Comparable<WireSafeEnum<T>> {
   companion object {
     @JvmStatic fun <T : Enum<T>> of(value: T): WireSafeEnum<T> = Known(value)
 
     @JvmStatic fun <T : Enum<T>> of(value: String): WireSafeEnum<T> = Unknown(value)
 
-    @JvmStatic fun isWireSafeEnum(type: Class<*>): Boolean = isWireSafeEnum(type.kotlin)
-
     @JvmStatic
-    fun isWireSafeEnum(type: KClass<*>): Boolean {
-      return type == WireSafeEnum::class || type == Known::class || type == Unknown::class
+    fun isWireSafeEnum(type: Type): Boolean = when (type) {
+      is Class<*> -> type == WireSafeEnum::class.java || type == Known::class.java || type == Unknown::class.java
+      is ParameterizedType -> isWireSafeEnum(type.rawType as Class<*>)
+      else -> false
     }
   }
 
@@ -23,7 +28,7 @@ sealed class WireSafeEnum<T : Enum<T>> : Comparable<WireSafeEnum<T>> {
       is Unknown<T> -> unknown(value)
     }
 
-  fun isKnown(): Boolean = match(known = { true }, unknown = { false })
+  val isKnown: Boolean by lazy { match(known = { true }, unknown = { false }) }
 
   fun unwrap(): T? = match(known = { it }, unknown = { null })
 

@@ -20,7 +20,7 @@ repositories {
   mavenCentral()
 }
 
-val jvmLanguageVersion = JavaLanguageVersion.of(11)
+val jvmLanguageVersion = JavaLanguageVersion.of(17)
 val jvmVendor = JvmVendorSpec.ADOPTIUM
 
 kotlin {
@@ -43,12 +43,10 @@ sourceSets {
   main {
     java.srcDirs("src/main/java")
     kotlin.srcDirs("src/main/kotlin")
-    resources.srcDirs("src/main/resources")
   }
   test {
     java.srcDirs("src/test/java")
     kotlin.srcDirs("src/test/kotlin")
-    resources.srcDirs("src/test/resources")
   }
 }
 

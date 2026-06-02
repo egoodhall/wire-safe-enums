@@ -5,10 +5,13 @@
 assertj = "3.24.2"
 jackson2 = "2.16.1"
 jackson3 = "3.0.0"
-moshi = "1.15.2"
+jdbi3 = "3.53.0"
 kotlin = "2.2.20"
 kotlinx-serialization = "1.9.0"
+liquibase = "5.0.3"
+moshi = "1.15.2"
 spotless = "8.0.0"
+sqlite = "3.53.1.0"
 
 [libraries]
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -17,10 +20,16 @@ jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind", ve
 jackson2-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson2" }
 jackson3-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson3" }
 jackson3-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin", version.ref = "jackson3" }
+jdbi3-core = { module = "org.jdbi:jdbi3-core", version.ref = "jdbi3" }
+jdbi3-kotlin = { module = "org.jdbi:jdbi3-kotlin", version.ref = "jdbi3" }
+jdbi3-kotlin-sqlobject = { module = "org.jdbi:jdbi3-kotlin-sqlobject", version.ref = "jdbi3" }
+jdbi3-testing = { module = "org.jdbi:jdbi3-testing", version.ref = "jdbi3" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
 moshi = { module = "com.squareup.moshi:moshi" , version.ref = "moshi" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin" , version.ref = "moshi" }
+sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 
 [bundles]
 jackson2 = ["jackson-annotations", "jackson2-databind", "jackson2-module-kotlin"]
