@@ -39,6 +39,9 @@ jobs:
       name: Set up mise
       uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac
     -
+      name: Export JAVA_HOME from mise
+      run: echo "JAVA_HOME=$(mise where java)" >> "$GITHUB_ENV"
+    -
       name: Set up Gradle
       uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2
     -
