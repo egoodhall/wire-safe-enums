@@ -15,11 +15,15 @@ sealed class WireSafeEnum<T : Enum<T>> : Comparable<WireSafeEnum<T>> {
     @JvmStatic fun <T : Enum<T>> of(value: String): WireSafeEnum<T> = Unknown(value)
 
     @JvmStatic
-    fun isWireSafeEnum(type: Type): Boolean = when (type) {
-      is Class<*> -> type == WireSafeEnum::class.java || type == Known::class.java || type == Unknown::class.java
-      is ParameterizedType -> isWireSafeEnum(type.rawType as Class<*>)
-      else -> false
-    }
+    fun isWireSafeEnum(type: Type): Boolean =
+      when (type) {
+        is Class<*> ->
+          type == WireSafeEnum::class.java ||
+            type == Known::class.java ||
+            type == Unknown::class.java
+        is ParameterizedType -> isWireSafeEnum(type.rawType as Class<*>)
+        else -> false
+      }
   }
 
   fun <U> match(known: (T) -> U, unknown: (String) -> U) =

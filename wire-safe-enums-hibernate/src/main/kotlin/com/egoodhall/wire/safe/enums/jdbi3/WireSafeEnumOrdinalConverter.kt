@@ -3,9 +3,8 @@ package com.egoodhall.wire.safe.enums.jdbi3
 import com.egoodhall.tools.wire.safe.enums.WireSafeEnum
 import jakarta.persistence.AttributeConverter
 
-abstract class WireSafeEnumOrdinalConverter<T : Enum<T>>(
-  private val enumClass: Class<T>,
-) : AttributeConverter<WireSafeEnum<T>, Int> {
+abstract class WireSafeEnumOrdinalConverter<T : Enum<T>>(private val enumClass: Class<T>) :
+  AttributeConverter<WireSafeEnum<T>, Int> {
 
   private val constants: Array<T> = enumClass.enumConstants
 
@@ -19,6 +18,7 @@ abstract class WireSafeEnumOrdinalConverter<T : Enum<T>>(
       },
     )
 
+  @Suppress("UseRequire")
   override fun convertToEntityAttribute(dbData: Int?): WireSafeEnum<T>? {
     if (dbData == null) return null
     if (dbData !in constants.indices) {

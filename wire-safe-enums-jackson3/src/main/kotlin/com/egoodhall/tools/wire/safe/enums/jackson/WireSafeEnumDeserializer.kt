@@ -24,7 +24,7 @@ internal class WireSafeEnumDeserializer<T : Enum<T>> : ValueDeserializer<WireSaf
     val enumClass = enumType.rawClass.kotlin as KClass<T>
     val delegate =
       ctxt.findRootValueDeserializer(enumType)
-        ?: throw IllegalStateException("Unable to find deserializer for ${enumClass.simpleName}")
+        ?: error("Unable to find deserializer for ${enumClass.simpleName}")
     return try {
       WireSafeEnum.of(delegate.deserialize(parser, ctxt) as T)
     } catch (_: Exception) {
@@ -36,9 +36,7 @@ internal class WireSafeEnumDeserializer<T : Enum<T>> : ValueDeserializer<WireSaf
     ctxt: DeserializationContext,
     property: BeanProperty?,
   ): ValueDeserializer<*> {
-    val type =
-      ctxt.contextualType
-        ?: throw IllegalStateException("Unable to determine enum type from context")
+    val type = ctxt.contextualType ?: error("Unable to determine enum type from context")
     this.type = type
     return this
   }

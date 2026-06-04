@@ -27,31 +27,41 @@ enum class IntType(val id: Int) {
 
 interface MyTableDao {
 
-  @SqlUpdate("""
+  @SqlUpdate(
+    """
     INSERT INTO string_table (type) VALUES (:input.type)
-  """)
+  """
+  )
   @GetGeneratedKeys
   fun insertString(input: StringTableInput): Int
 
-  @SqlQuery("""
+  @SqlQuery(
+    """
     SELECT * FROM string_table WHERE id = :id LIMIT 1
-  """)
+  """
+  )
   fun getString(id: Int): StringTableRow?
 
-  @SqlUpdate("""
+  @SqlUpdate(
+    """
     INSERT INTO int_table (type) VALUES (:type)
-  """)
+  """
+  )
   @GetGeneratedKeys
   fun insertRawInteger(type: Int): Int
 
-  @SqlUpdate("""
+  @SqlUpdate(
+    """
     INSERT INTO int_table (type) VALUES (:input.type)
-  """)
+  """
+  )
   @GetGeneratedKeys
   fun insertInt(input: IntTableInput): Int
 
-  @SqlQuery("""
+  @SqlQuery(
+    """
     SELECT * FROM int_table WHERE id = :id LIMIT 1
-  """)
+  """
+  )
   fun getInt(id: Int): IntTableRow?
 }

@@ -28,7 +28,7 @@ internal class WireSafeEnumDeserializer<T : Enum<T>> :
     val enumClass = enumType.rawClass.kotlin as KClass<T>
     val delegate =
       ctxt.findRootValueDeserializer(enumType)
-        ?: throw IllegalStateException("Unable to find deserializer for ${enumClass.simpleName}")
+        ?: error("Unable to find deserializer for ${enumClass.simpleName}")
     return try {
       WireSafeEnum.of(delegate.deserialize(parser, ctxt) as T)
     } catch (_: Exception) {
@@ -40,9 +40,7 @@ internal class WireSafeEnumDeserializer<T : Enum<T>> :
     ctxt: DeserializationContext,
     property: BeanProperty?,
   ): JsonDeserializer<*> {
-    val type =
-      ctxt.contextualType
-        ?: throw IllegalStateException("Unable to determine enum type from context")
+    val type = ctxt.contextualType ?: error("Unable to determine enum type from context")
     this.type = type
     return this
   }
@@ -67,14 +65,12 @@ internal class WireSafeEnumKeyDeserializer<T : Enum<T>> :
     ctxt: DeserializationContext,
     property: BeanProperty?,
   ): KeyDeserializer? {
-    val type =
-      ctxt.contextualType
-        ?: throw IllegalStateException("Unable to determine enum type from context")
+    val type = ctxt.contextualType ?: error("Unable to determine enum type from context")
     val mapType = type.bindings.getBoundType(0)
     val keyType = mapType.bindings.getBoundType(0)
     this.delegate =
       ctxt.findKeyDeserializer(keyType, property)
-        ?: throw IllegalStateException("Unable to find key deserializer for type $keyType")
+        ?: error("Unable to find key deserializer for type $keyType")
     return this
   }
 }

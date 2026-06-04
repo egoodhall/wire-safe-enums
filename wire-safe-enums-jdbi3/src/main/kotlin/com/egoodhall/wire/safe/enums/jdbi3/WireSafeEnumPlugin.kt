@@ -21,7 +21,9 @@ class WireSafeEnumPlugin : JdbiPlugin {
 private class WireSafeEnumColumnMapperFactory : ColumnMapperFactory {
   override fun build(type: Type, config: ConfigRegistry): Optional<ColumnMapper<*>> {
     if (WireSafeEnum.isWireSafeEnum(type)) {
-      return findGenericParameter(type, WireSafeEnum::class.java).map { WireSafeEnumColumnMapper(it) }
+      return findGenericParameter(type, WireSafeEnum::class.java).map {
+        WireSafeEnumColumnMapper(it)
+      }
     }
     return Optional.empty()
   }

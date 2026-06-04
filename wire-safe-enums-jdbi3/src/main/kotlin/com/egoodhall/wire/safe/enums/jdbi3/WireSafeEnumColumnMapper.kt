@@ -15,10 +15,13 @@ class WireSafeEnumColumnMapper<T : Enum<T>>(private val type: Type) :
     val delegate: ColumnMapper<T> = ctx.findColumnMapperFor(type).orElseThrow() as ColumnMapper<T>
     try {
       return WireSafeEnum.of(delegate.map(result, columnNumber, ctx))
-    } catch (e: UnableToProduceResultException) {
+    } catch (@Suppress("SwallowedException") e: UnableToProduceResultException) {
       return when (val columnType = JDBCType.valueOf(result.metaData.getColumnType(columnNumber))) {
         VARCHAR -> WireSafeEnum.of(result.getString(columnNumber))
-        else -> throw UnableToProduceResultException("Can't determine unknown type for value: $columnType")
+        else ->
+          throw UnableToProduceResultException(
+            "Can't determine unknown type for value: $columnType"
+          )
       }
     }
   }

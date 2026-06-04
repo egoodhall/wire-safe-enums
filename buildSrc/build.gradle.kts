@@ -1,5 +1,6 @@
 plugins {
   `kotlin-dsl`
+  alias(libs.plugins.detekt)
   alias(libs.plugins.spotless)
 }
 
@@ -9,7 +10,12 @@ kotlin {
 
 dependencies {
   implementation(libs.kotlin.gradle.plugin)
+  implementation(plugin(libs.plugins.detekt))
   implementation(plugin(libs.plugins.spotless))
+}
+
+detekt {
+  buildUponDefaultConfig = true
 }
 
 spotless {

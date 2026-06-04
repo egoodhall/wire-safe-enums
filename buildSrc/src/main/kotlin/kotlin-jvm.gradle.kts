@@ -9,6 +9,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
   kotlin("jvm")
   id("com.diffplug.spotless")
+  id("io.gitlab.arturbosch.detekt")
   `java-library`
   `maven-publish`
   signing
@@ -48,6 +49,10 @@ sourceSets {
     java.srcDirs("src/test/java")
     kotlin.srcDirs("src/test/kotlin")
   }
+}
+
+detekt {
+  buildUponDefaultConfig = true
 }
 
 spotless {

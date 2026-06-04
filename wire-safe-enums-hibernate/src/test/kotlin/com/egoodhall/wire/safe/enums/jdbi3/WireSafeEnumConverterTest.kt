@@ -14,8 +14,9 @@ class WireSafeEnumConverterTest : WireSafeEnumHibernateTest() {
     session.flush()
     session.clear()
 
-    val loaded = session.find(StringTableRow::class.java, saved.id)
-      ?: throw AssertionError("Expected a single row")
+    val loaded =
+      session.find(StringTableRow::class.java, saved.id)
+        ?: throw AssertionError("Expected a single row")
 
     assertThat(loaded.type).containsKnown(StringType.TYPE_A)
   }
@@ -26,8 +27,9 @@ class WireSafeEnumConverterTest : WireSafeEnumHibernateTest() {
     session.flush()
     session.clear()
 
-    val loaded = session.find(StringTableRow::class.java, saved.id)
-      ?: throw AssertionError("Expected a single row")
+    val loaded =
+      session.find(StringTableRow::class.java, saved.id)
+        ?: throw AssertionError("Expected a single row")
 
     assertThat(loaded.type).containsUnknown("D")
   }
@@ -38,8 +40,9 @@ class WireSafeEnumConverterTest : WireSafeEnumHibernateTest() {
     session.flush()
     session.clear()
 
-    val loaded = session.find(IntTableRow::class.java, saved.id)
-      ?: throw AssertionError("Expected a single row")
+    val loaded =
+      session.find(IntTableRow::class.java, saved.id)
+        ?: throw AssertionError("Expected a single row")
 
     assertThat(loaded.type).containsKnown(IntType.TYPE_A)
   }

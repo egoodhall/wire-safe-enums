@@ -3,6 +3,7 @@
 
 [versions]
 assertj = "3.24.2"
+detekt = "1.23.8"
 hibernate = "7.4.0.Final"
 jackson2 = "2.16.1"
 jackson3 = "3.0.0"
@@ -41,4 +42,5 @@ moshi = ["moshi", "moshi-kotlin"]
 kotlinx = ["kotlinx-serialization-json"]
 
 [plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

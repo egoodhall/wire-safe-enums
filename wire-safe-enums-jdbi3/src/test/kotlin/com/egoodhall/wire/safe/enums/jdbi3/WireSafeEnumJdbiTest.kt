@@ -33,12 +33,14 @@ abstract class WireSafeEnumJdbiTest {
 
     @JvmStatic
     @BeforeAll
-    fun setUp() = sqlite.jdbi.useHandle<RuntimeException> { handle ->
-      val db = DatabaseFactory.getInstance()
-        .findCorrectDatabaseImplementation(JdbcConnection(handle.connection))
-      Liquibase("migrations.sql", ClassLoaderResourceAccessor(), db).use {
-        it.update(Contexts("job"))
+    fun setUp() =
+      sqlite.jdbi.useHandle<RuntimeException> { handle ->
+        val db =
+          DatabaseFactory.getInstance()
+            .findCorrectDatabaseImplementation(JdbcConnection(handle.connection))
+        Liquibase("migrations.sql", ClassLoaderResourceAccessor(), db).use {
+          it.update(Contexts("job"))
+        }
       }
-    }
   }
 }

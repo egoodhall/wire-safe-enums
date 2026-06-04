@@ -23,17 +23,18 @@ abstract class WireSafeEnumHibernateTest {
     @JvmStatic
     @BeforeAll
     fun setUp() {
-      sessionFactory = Configuration()
-        .setProperty("hibernate.connection.url", "jdbc:sqlite::memory:")
-        .setProperty("hibernate.connection.driver_class", "org.sqlite.JDBC")
-        .setProperty("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect")
-        .setProperty("hibernate.hbm2ddl.auto", "create-drop")
-        .setProperty("hibernate.show_sql", "false")
-        .addAnnotatedClass(StringTableRow::class.java)
-        .addAnnotatedClass(IntTableRow::class.java)
-        .addAttributeConverter(StringTypeConverter::class.java)
-        .addAttributeConverter(IntTypeConverter::class.java)
-        .buildSessionFactory()
+      sessionFactory =
+        Configuration()
+          .setProperty("hibernate.connection.url", "jdbc:sqlite::memory:")
+          .setProperty("hibernate.connection.driver_class", "org.sqlite.JDBC")
+          .setProperty("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect")
+          .setProperty("hibernate.hbm2ddl.auto", "create-drop")
+          .setProperty("hibernate.show_sql", "false")
+          .addAnnotatedClass(StringTableRow::class.java)
+          .addAnnotatedClass(IntTableRow::class.java)
+          .addAttributeConverter(StringTypeConverter::class.java)
+          .addAttributeConverter(IntTypeConverter::class.java)
+          .buildSessionFactory()
     }
 
     @JvmStatic

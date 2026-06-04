@@ -21,7 +21,7 @@ internal class WireSafeEnumSerializer<T : Enum<T>> : JsonSerializer<WireSafeEnum
     value.consume(
       known = {
         (serializers.findValueSerializer(it::class.java)
-            ?: throw IllegalStateException("Unable to find serializer for type ${it::class.java}"))
+            ?: error("Unable to find serializer for type ${it::class.java}"))
           .serialize(value.unwrap(), gen, serializers)
       },
       unknown = { gen.writeString(it) },

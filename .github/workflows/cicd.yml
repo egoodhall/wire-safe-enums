@@ -1,16 +1,29 @@
-name: Publish Release
+name: CI/CD
 
 on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - '.github/**/*'
+      - '*.md'
+      - '.gitignore'
   release:
     types:
     - published
 
 jobs:
-  release:
+  cicd:
     runs-on: ubuntu-latest
+    if: >-
+      ${{
+      (github.event_name == 'release' && github.event.action == 'published') ||
+      (github.event_name == 'push')
+      }}
     steps:
     -
       name: Validate release version
+      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
       shell: python
       run: | 
         import os, re
@@ -23,22 +36,25 @@ jobs:
       name: Checkout code
       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
     -
-      name: Set up JDK 25
-      uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
-      with:
-        java-version: '25'
-        distribution: 'temurin'
-        cache: 'gradle'
+      name: Set up mise
+      uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac
     -
       name: Set up Gradle
       uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2
     -
-      name: Build and Publish
+      name: Spotless
+      run: ./gradlew spotlessCheck
+    -
+      name: Detekt
+      run: ./gradlew detekt
+    -
+      name: Build
+      run: ./gradlew build
+    -
+      name: Publish artifacts
+      if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
       run: >-
         ./gradlew
-        spotlessCheck
-        build
-        test
         generatePomFileForMavenPublication
         generateMetadataFileForMavenPublication
         signMavenPublication

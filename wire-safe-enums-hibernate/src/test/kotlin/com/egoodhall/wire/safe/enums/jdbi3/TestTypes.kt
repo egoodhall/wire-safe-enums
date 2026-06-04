@@ -20,12 +20,9 @@ class StringTypeConverter : WireSafeEnumConverter<StringType>(StringType::class.
 @Entity
 @Table(name = "string_table")
 open class StringTableRow() {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  open var id: Int? = null
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) open var id: Int? = null
 
-  @Column(nullable = false)
-  open lateinit var type: WireSafeEnum<StringType>
+  @Column(nullable = false) open lateinit var type: WireSafeEnum<StringType>
 
   constructor(type: WireSafeEnum<StringType>) : this() {
     this.type = type
@@ -43,12 +40,9 @@ class IntTypeConverter : WireSafeEnumOrdinalConverter<IntType>(IntType::class.ja
 @Entity
 @Table(name = "int_table")
 open class IntTableRow() {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  open var id: Int? = null
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) open var id: Int? = null
 
-  @Column(nullable = false)
-  open lateinit var type: WireSafeEnum<IntType>
+  @Column(nullable = false) open lateinit var type: WireSafeEnum<IntType>
 
   constructor(type: WireSafeEnum<IntType>) : this() {
     this.type = type

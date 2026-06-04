@@ -14,7 +14,7 @@ class WireSafeEnumArgumentFactory : ArgumentFactory {
       val arguments = config.get(Arguments::class.java)
       return value.match(
         known = { handleKnown(arguments, it) },
-        unknown = { handleUnknown(arguments, expectedType, it) }
+        unknown = { handleUnknown(arguments, expectedType, it) },
       )
     }
     return Optional.empty()
@@ -24,7 +24,11 @@ class WireSafeEnumArgumentFactory : ArgumentFactory {
     return args.findFor(value.javaClass, value)
   }
 
-  private fun handleUnknown(args: Arguments, expectedType: Type, value: String): Optional<Argument> {
+  private fun handleUnknown(
+    args: Arguments,
+    expectedType: Type,
+    value: String,
+  ): Optional<Argument> {
     return args.findFor(expectedType, value)
   }
 }

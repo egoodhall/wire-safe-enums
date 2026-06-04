@@ -25,14 +25,12 @@ internal class WireSafeEnumKeyDeserializer<T : Enum<T>> :
     ctxt: DeserializationContext,
     property: BeanProperty?,
   ): KeyDeserializer? {
-    val type =
-      ctxt.contextualType
-        ?: throw IllegalStateException("Unable to determine enum type from context")
+    val type = ctxt.contextualType ?: error("Unable to determine enum type from context")
     val mapType = type.bindings.getBoundType(0)
     val keyType = mapType.bindings.getBoundType(0)
     this.delegate =
       ctxt.findKeyDeserializer(keyType, property)
-        ?: throw IllegalStateException("Unable to find key deserializer for type $keyType")
+        ?: error("Unable to find key deserializer for type $keyType")
     return this
   }
 }

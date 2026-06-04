@@ -27,7 +27,7 @@ class WireSafeEnumAssert<T : Enum<T>>(actual: WireSafeEnum<T>) :
       known = { this },
       unknown = {
         failWithMessage("expected known enum value, but was $it")
-        throw IllegalStateException("unreachable")
+        error("unreachable")
       },
     )
 
@@ -41,7 +41,7 @@ class WireSafeEnumAssert<T : Enum<T>>(actual: WireSafeEnum<T>) :
       },
       unknown = {
         failWithMessage("expected known enum value, but was $it")
-        throw IllegalStateException("unreachable")
+        error("unreachable")
       },
     )
 
@@ -50,7 +50,7 @@ class WireSafeEnumAssert<T : Enum<T>>(actual: WireSafeEnum<T>) :
       known = { ObjectAssert(it) },
       unknown = {
         failWithMessage("expected known enum value, but was $actual")
-        throw IllegalStateException("unreachable")
+        error("unreachable")
       },
     )
 
@@ -58,7 +58,7 @@ class WireSafeEnumAssert<T : Enum<T>>(actual: WireSafeEnum<T>) :
     actual.match(
       known = {
         failWithMessage("expected unknown value, but it was $actual")
-        throw IllegalStateException("unreachable")
+        error("unreachable")
       },
       unknown = { this },
     )
@@ -67,7 +67,7 @@ class WireSafeEnumAssert<T : Enum<T>>(actual: WireSafeEnum<T>) :
     actual.match(
       known = {
         failWithMessage("expected unknown value, but it was \"$actual\"")
-        throw IllegalStateException("unreachable")
+        error("unreachable")
       },
       unknown = {
         if (expected != it) {
@@ -81,7 +81,7 @@ class WireSafeEnumAssert<T : Enum<T>>(actual: WireSafeEnum<T>) :
     actual.match(
       known = {
         failWithMessage("expected unknown value, but it was $actual")
-        throw IllegalStateException("unreachable")
+        error("unreachable")
       },
       unknown = { StringAssert(it) },
     )
