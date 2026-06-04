@@ -26,6 +26,13 @@ an enum value may not be known.
 | kotlinx.serialization | `wire-safe-enums-kotlinx`  | 1.9.0+             | ✅ Stable |
 | Moshi                 | `wire-safe-enums-moshi`    | 1.15.2+            | ✅ Stable |
 
+### Persistence Libraries
+
+| Library   | Module                      | Supported Versions | Status    |
+| --------- | --------------------------- | ------------------ | --------- |
+| JDBI 3    | `wire-safe-enums-jdbi3`     | 3.53.0+            | ✅ Stable |
+| Hibernate | `wire-safe-enums-hibernate` | 7.4.0+             | ✅ Stable |
+
 ### Platform Support
 
 - **JVM**: Full support
@@ -313,6 +320,109 @@ val knownJson = adapter.toJson(known) // "MD"
 // Use the adapter to convert *unknown* values to/from JSON
 val unknown = adapter.fromJson("\"XL\"") // Unknown("XL")
 val unknownJson = adapter.toJson(unknown) // "XL"
+```
+
+</details>
+
+## Persistence
+
+`WireSafeEnum` can also be persisted to relational databases. The semantics differ slightly from the JSON case: the `Unknown` variant is preserved whenever the underlying storage format can carry it (e.g. `VARCHAR`), but for compact storage formats like `INTEGER` ordinals an unmapped value is treated as a data integrity error rather than a forward-compatibility case — you own both sides of a database schema, so an unmapped ordinal generally means corruption, not a version skew.
+
+<details>
+<summary><b>JDBI 3</b></summary>
+
+### Installation:
+
+**Gradle:**
+
+```kotlin
+// com.egoodhall.tools:wire-safe-enums is exposed as `api`, so you only need this dependency
+implementation("com.egoodhall.tools:wire-safe-enums-jdbi3:${VERSION}")
+```
+
+**Maven:**
+
+```xml
+<dependency>
+  <groupId>com.egoodhall.tools</groupId>
+  <artifactId>wire-safe-enums-jdbi3</artifactId>
+  <version>${VERSION}</version>
+</dependency>
+```
+
+### Usage
+
+JDBI 3 support is provided by `WireSafeEnumPlugin`. Install it on your `Jdbi` instance and column mappers and argument factories are registered for all `WireSafeEnum<T>` types — no per-enum boilerplate.
+
+```kotlin
+val jdbi = Jdbi.create(dataSource)
+  .installPlugin(KotlinPlugin())
+  .installPlugin(KotlinSqlObjectPlugin())
+  .installPlugin(WireSafeEnumPlugin())
+```
+
+The plugin defers to JDBI's existing enum mapping, so both name-based (default) and ordinal-based (`@EnumByOrdinal`) storage are supported. When reading a value that doesn't map to a known enum constant, a `VARCHAR` column is wrapped as `Unknown(string)`; non-string columns (e.g. `INTEGER`) throw, because there's no meaningful string to preserve.
+
+```kotlin
+data class TeeShirt(val id: Int, val size: WireSafeEnum<TeeShirtSize>)
+
+interface TeeShirtDao {
+  @SqlQuery("SELECT * FROM tee_shirts WHERE id = :id")
+  fun get(id: Int): TeeShirt?
+
+  @SqlUpdate("INSERT INTO tee_shirts (size) VALUES (:size)")
+  fun insert(size: WireSafeEnum<TeeShirtSize>)
+}
+```
+
+</details>
+
+<details>
+<summary><b>Hibernate</b></summary>
+
+### Installation:
+
+**Gradle:**
+
+```kotlin
+// com.egoodhall.tools:wire-safe-enums is exposed as `api`, so you only need this dependency
+implementation("com.egoodhall.tools:wire-safe-enums-hibernate:${VERSION}")
+```
+
+**Maven:**
+
+```xml
+<dependency>
+  <groupId>com.egoodhall.tools</groupId>
+  <artifactId>wire-safe-enums-hibernate</artifactId>
+  <version>${VERSION}</version>
+</dependency>
+```
+
+### Usage
+
+Hibernate support is provided via abstract JPA `AttributeConverter` base classes. Subclass one per enum, annotate with `@Converter(autoApply = true)`, and Hibernate will transparently apply it to every entity attribute of that type — no per-field annotations required.
+
+Two converters are provided, depending on how the column is stored:
+
+- `WireSafeEnumConverter<T>` — stores as `String` (the enum constant name). Round-trips both `Known` and `Unknown` values.
+- `WireSafeEnumOrdinalConverter<T>` — stores as `Int` (the enum ordinal). Only `Known` values are supported; reading an unmapped ordinal or persisting an `Unknown` throws.
+
+```kotlin
+// String storage — preserves Unknown values
+@Converter(autoApply = true)
+class TeeShirtSizeConverter : WireSafeEnumConverter<TeeShirtSize>(TeeShirtSize::class.java)
+
+// Ordinal storage — compact, but Unknown values are not representable
+@Converter(autoApply = true)
+class PriorityConverter : WireSafeEnumOrdinalConverter<Priority>(Priority::class.java)
+
+@Entity
+class TeeShirt {
+  @Id @GeneratedValue var id: Long? = null
+  lateinit var size: WireSafeEnum<TeeShirtSize> // auto-applied via TeeShirtSizeConverter
+  lateinit var priority: WireSafeEnum<Priority>  // auto-applied via PriorityConverter
+}
 ```
 
 </details>
