@@ -1,4 +1,4 @@
 [tools]
 gradle = "9.1.0"
-java = "25"
+java = "21"
 kotlin = "2.4.0"
