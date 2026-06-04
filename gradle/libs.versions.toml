@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-assertj = "3.24.2"
+assertj = "3.27.7"
 detekt = "1.23.8"
 hibernate = "7.4.0.Final"
 jackson2 = "2.16.1"
