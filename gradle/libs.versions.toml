@@ -3,6 +3,7 @@
 
 [versions]
 assertj = "3.24.2"
+hibernate = "7.4.0.Final"
 jackson2 = "2.16.1"
 jackson3 = "3.0.0"
 jdbi3 = "3.53.0"
@@ -15,6 +16,8 @@ sqlite = "3.53.1.0"
 
 [libraries]
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+hibernate-core = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
+hibernate-community-dialects = { module = "org.hibernate.orm:hibernate-community-dialects", version.ref = "hibernate" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson2" }
 jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson2" }
 jackson2-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson2" }

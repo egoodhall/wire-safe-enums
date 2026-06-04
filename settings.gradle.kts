@@ -15,6 +15,7 @@ plugins {
 rootProject.name = "wire-safe-enums-parent"
 include(":wire-safe-enums")
 include("wire-safe-enums-assertj")
+include("wire-safe-enums-hibernate")
 include("wire-safe-enums-jackson2")
 include("wire-safe-enums-jackson3")
 include("wire-safe-enums-jdbi3")
